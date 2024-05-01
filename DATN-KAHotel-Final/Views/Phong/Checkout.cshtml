@@ -1,0 +1,311 @@
+﻿@{
+    Layout = null;
+    List<Item> cart = ViewBag.Cart as List<Item>;
+
+    // Lấy giá trị từ Session và chuyển đổi thành kiểu DateTime
+    DateTime batDau = DateTime.Parse(Context.Session.GetString("bat_dau"));
+    DateTime ketThuc = DateTime.Parse(Context.Session.GetString("ket_thuc"));
+
+    // Tính số ngày ở
+    TimeSpan khoangCach = ketThuc - batDau;
+    int soNgay = (int)khoangCach.TotalDays;
+}
+
+@functions {
+    QlksContext db = new QlksContext();
+
+    public string CalculateTotalAmount(DateTime batDau, DateTime ketThuc, double? giaPhong)
+    {
+        if (giaPhong.HasValue)
+        {
+            // Tính số ngày ở qua đêm
+            int soNgayOQuaDem = (ketThuc.Date - batDau.Date).Days;
+
+            // Tính tổng tiền
+            double tongTien = giaPhong.Value * soNgayOQuaDem;
+
+            // Định dạng và trả về chuỗi kết quả
+            return string.Format("{0:N0} VNĐ ({1} ngày ở qua đêm)", tongTien, soNgayOQuaDem);
+        }
+        // Trả về chuỗi rỗng nếu giá phòng là null
+        return "";
+    }
+
+    public TaiKhoan getUserByUserName(string ten_dang_nhap)
+    {
+        TaiKhoan tk = db.TaiKhoans.FirstOrDefault(u => u.TenDangNhap == ten_dang_nhap);
+        return tk;
+    }
+}
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<!-- Mirrored from easybook.kwst.net/booking-single.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:19:48 GMT -->
+<head>
+    <!--=============== basic  ===============-->
+    <meta charset="UTF-8">
+    <title>Easybook - Hotel Booking Directory Listing Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <!--=============== css  ===============-->
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/plugins.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/style.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/color.css">
+    <!--=============== favicons ===============-->
+    <link rel="shortcut icon" href="../LayoutHotel/images/favicon.ico">
+</head>
+<body>
+    <!--loader-->
+    <div class="loader-wrap">
+        <div class="pin">
+            <div class="pulse"></div>
+        </div>
+    </div>
+    <!--loader end-->
+    <!-- Main  -->
+    <div id="main">
+        <!-- header-->
+        @await Html.PartialAsync("_PartialHeader")
+        <!--  header end -->
+        <!--  wrapper  -->
+        <div id="wrapper">
+            <!-- content-->
+            <div class="content">
+                <div class="breadcrumbs-fs fl-wrap">
+                    <div class="container">
+                        <div class="breadcrumbs fl-wrap"><a href="/home/index">Trang chủ</a><a href="#">Chi tiết khách sạn</a><span>Thanh toán</span></div>
+                    </div>
+                </div>
+                @foreach(var item in cart)
+                {
+
+				    var u = getUserByUserName(@Context.Session.GetString("taikhoan"));
+                    <section class="middle-padding gre y-blue-bg">
+                        <div class="container">
+                            <div class="list-main-wrap-title single-main-wrap-title fl-wrap">
+                                <h2>Đặt phòng : <span></span>@item.phong.TenPhong</h2>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="bookiing-form-wrap">
+                                        <ul id="progressbar">
+                                            <li class="active"><span>01.</span>Thông tin cá nhân</li>
+                                            <li><span>02.</span>Địa chỉ thanh toán</li>
+                                            <li><span>03.</span>Phương thức thanh toán</li>
+                                            <li><span>04.</span>Xác nhận</li>
+                                        </ul>
+                                        <!--   list-single-main-item -->
+                                        <div class="list-single-main-item fl-wrap hidden-section tr-sec">
+                                            <div class="profile-edit-container">
+                                                <div class="custom-form">
+                                                    <form action="/phong/checkout" method="post">
+                                                        <fieldset class="fl-wrap book_mdf">
+                                                            <input type="hidden" name="id" class="form-control" value="@u.Id">
+                                                            <div class="list-single-main-item-title fl-wrap">
+                                                                <h3>Thông tin cá nhân của bạn</h3>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <label>Họ <i class="far fa-user"></i></label>
+                                                                    <input type="text" name="ho" placeholder="Họ" value="" />
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <label>Tên <i class="far fa-user"></i></label>
+                                                                    <input type="text" name="ten" placeholder="Tên" value="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <label>Địa chỉ email<i class="far fa-envelope"></i>  </label>
+                                                                    <input type="text" name="email" placeholder="yourmail@domain.com" value="" />
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <label>Số điện thoại<i class="far fa-phone"></i>  </label>
+                                                                    <input type="text" name="phone" placeholder="01123456789" value="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="log-massage">Khách hàng hiện tại? <a href="#" class="modal-open">Nhấn vào đây để đăng nhập</a></div>
+                                                            <div class="log-separator fl-wrap"><span>or</span></div>
+                                                            <div class="soc-log fl-wrap">
+                                                                <p>Để đăng nhập hoặc đăng ký nhanh hơn, hãy sử dụng tài khoản xã hội của bạn.</p>
+                                                                <a href="#" class="facebook-log"><i class="fab fa-facebook-f"></i>Kết nối với Facebook</a>
+                                                            </div>
+                                                            <div class="filter-tags">
+                                                                <input id="check-a" type="checkbox" name="check">
+                                                                <label for="check-a">Bằng cách tiếp tục, bạn đồng ý với<a href="#" target="_blank">Các điều khoản và điều kiện</a>.</label>
+                                                            </div>
+                                                            <span class="fw-separator"></span>
+                                                            <a href="#" class="next-form action-button btn no-shdow-btn color-bg">Địa chỉ thanh toán <i class="fal fa-angle-right"></i></a>
+                                                        </fieldset>
+                                                        <fieldset class="fl-wrap book_mdf">
+                                                            <div class="list-single-main-item-title fl-wrap">
+                                                                <h3>Địa chỉ thanh toán</h3>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-6">
+                                                                    <label>Thành phố <i class="fal fa-globe-asia"></i></label>
+                                                                    <input type="text" name="thanhpho" placeholder="Thành phố của bạn" value="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-12">
+                                                                    <label>Đường phố <i class="fal fa-road"></i> </label>
+                                                                    <input type="text" name="duongpho" placeholder="Đường phố của bạn" value="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-sm-8">
+                                                                    <label>Tình trạng<i class="fal fa-street-view"></i></label>
+                                                                    <input type="text" name="tinhtrang" placeholder="Tình trạng của bạn" value="" />
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <label>Mã bưu điện<i class="fal fa-barcode"></i> </label>
+                                                                    <input type="text" name="mabuudien" placeholder="123456" value="" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="list-single-main-item-title fl-wrap">
+                                                                <h3>Ghi chú bổ sung</h3>
+                                                            </div>
+                                                            <textarea cols="40" rows="3" name="ghichu" placeholder="Notes"></textarea>
+                                                            <span class="fw-separator"></span>
+                                                            <a href="#" class="previous-form action-button back-form color-bg"><i class="fal fa-angle-left"></i> Trở lại</a>
+                                                            <input type="submit" name="payment" value="Bước thanh toán" class="btn color-bg"/>
+                                                        </fieldset>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--   list-single-main-item end -->
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="box-widget-item-header">
+                                        <h3> Your  cart</h3>
+                                    </div>
+                                    <!--cart-details  -->
+                                    <div class="cart-details fl-wrap">
+                                        <!--cart-details_header-->
+                                        <div class="cart-details_header">
+                                            <a href="#" class="widget-posts-img"><img src="@Url.Content("~/Images/phong/"+item.phong.AnhDaiDien)" class="respimg" alt=""></a>
+                                            <div class="widget-posts-descr">
+                                                <a href="#" title="">@item.phong.TenPhong</a>
+                                                <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                                <div class="geodir-category-location fl-wrap"><a href="#"><i class="fas fa-map-marker-alt"></i> 40 JOURNAL SQUARE PLAZA, NJ, US</a></div>
+                                            </div>
+                                        </div>
+                                        <!--cart-details_header end-->
+                                        <!--ccart-details_text-->
+                                        <div class="cart-details_text">
+                                            <ul class="cart_list">
+                                                <li>Loại phòng <span>Standard Family Room <strong>$81</strong></span></li>
+                                                <li>Từ ngày <span>@Context.Session.GetString("bat_dau")</span></li>
+                                                <li>Đến ngày <span>@Context.Session.GetString("ket_thuc")</span></li>
+                                                <li>Ngày ở<span>@soNgay </span></li>
+                                                <li>Người lớn <span>2</span></li>
+                                                <li>Trẻ em <span>1 <strong>-10%</strong></span></li>
+                                                <li>Thuế và phí <span><strong>120,000 VNĐ</strong></span></li>
+                                            </ul>
+                                        </div>
+                                        <!--cart-details_text end -->
+                                    </div>
+                                    <!--cart-details end -->
+                                    <!--cart-total -->
+                                    <div class="cart-total">
+                                        <span class="cart-total_item_title">Tổng tiền</span>
+                                        <strong>@CalculateTotalAmount(batDau, ketThuc, item.phong.GiaPhong)</strong>
+                                    </div>
+                                    <!--cart-total end -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                }
+                <!-- section end -->
+            </div>
+            <!-- content end-->
+        </div>
+        <!--wrapper end -->
+        <!--footer -->
+        @await Html.PartialAsync("_PartialFooter")
+        <!--footer end -->
+        <!--register form -->
+        <div class="main-register-wrap modal">
+            <div class="reg-overlay"></div>
+            <div class="main-register-holder">
+                <div class="main-register fl-wrap">
+                    <div class="close-reg color-bg"><i class="fal fa-times"></i></div>
+                    <ul class="tabs-menu">
+                        <li class="current"><a href="#tab-1"><i class="fal fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="#tab-2"><i class="fal fa-user-plus"></i> Register</a></li>
+                    </ul>
+                    <!--tabs -->
+                    <div id="tabs-container">
+                        <div class="tab">
+                            <!--tab -->
+                            <div id="tab-1" class="tab-content">
+                                <h3>Đăng nhập <span>KA<strong>Hotel</strong></span></h3>
+                                <div class="custom-form">
+                                    <form method="post" name="registerform">
+                                        <label>Tài khoản <span>*</span> </label>
+                                        <input name="email" type="text" onClick="this.select()" value="">
+                                        <label>Mật khẩu <span>*</span> </label>
+                                        <input name="password" type="password" onClick="this.select()" value="">
+                                        <button type="submit" class="log-submit-btn"><span>Log In</span></button>
+                                        <div class="clearfix"></div>
+                                        <div class="filter-tags">
+                                            <input id="check-a12" type="checkbox" name="check">
+                                            <label for="check-a12">Remember me</label>
+                                        </div>
+                                    </form>
+                                    <div class="lost_password">
+                                        <a href="#">Lost Your Password?</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab end -->
+                            <!--tab -->
+                            <div class="tab">
+                                <div id="tab-2" class="tab-content">
+                                    <h3>Sign Up <span>Easy<strong>Book</strong></span></h3>
+                                    <div class="custom-form">
+                                        <form method="post" name="registerform" class="main-register-form" id="main-register-form2">
+                                            <label>Full Name <span>*</span> </label>
+                                            <input name="name" type="text" onClick="this.select()" value="">
+                                            <label>Email Address <span>*</span></label>
+                                            <input name="email" type="text" onClick="this.select()" value="">
+                                            <label>Password <span>*</span></label>
+                                            <input name="password" type="password" onClick="this.select()" value="">
+                                            <button type="submit" class="log-submit-btn"><span>Register</span></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab end -->
+                        </div>
+                        <!--tabs end -->
+                        <div class="log-separator fl-wrap"><span>or</span></div>
+                        <div class="soc-log fl-wrap">
+                            <p>For faster login or register use your social account.</p>
+                            <a href="#" class="facebook-log"><i class="fab fa-facebook-f"></i>Connect with Facebook</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--register form end -->
+        <a class="to-top"><i class="fas fa-caret-up"></i></a>
+    </div>
+    <!-- Main end -->
+    <!--=============== scripts  ===============-->
+    <script type="text/javascript" src="../LayoutHotel/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/plugins.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/scripts.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwJSRi0zFjDemECmFl9JtRj1FY7TiTRRo&amp;libraries=places&amp;callback=initAutocomplete"></script>
+</body>
+
+<!-- Mirrored from easybook.kwst.net/booking-single.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:19:48 GMT -->
+</html>

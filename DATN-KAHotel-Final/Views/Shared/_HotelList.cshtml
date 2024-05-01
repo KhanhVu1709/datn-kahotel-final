@@ -1,0 +1,166 @@
+﻿@model IEnumerable<KhachSan>
+
+@functions {
+    // khoi tao doi tuong
+    QlksContext db = new QlksContext();
+
+    // giá trung bình các phòng của khách sạn
+    public double? getGiaTrungBinhKS(int idKs)
+    {
+        List<Phong> phongs = db.Phongs.Where(p => p.IdKhachSan == idKs).ToList();
+
+        double? giaTB = 0;
+
+        foreach (var item in phongs)
+        {
+            giaTB += item.GiaPhong;
+        }
+
+        return giaTB / phongs.Count();
+    }
+
+    // lấy danh sách đánh giá của khách sạn
+    public List<DanhGium> getAllDanhGiaByIdKs(int idKs)
+    {
+        var list = db.DanhGia.Where(d => d.IdKhachSan == idKs).OrderByDescending(t => t.Id).ToList();
+        return list;
+    }
+
+    public double getDiemTBAllById(int? idKs)
+    {
+        var list = db.DanhGia.Where(d => d.IdKhachSan == idKs).ToList();
+        double diemTB = 0;
+        foreach (var item in list)
+        {
+            diemTB += (double)(item.DiemThoaiMai + item.DiemNhanVien + item.DiemSachSe + item.DiemCoSo) / 4;
+        }
+        diemTB = diemTB / list.Count;
+        return Math.Round(diemTB, 1);
+    }
+
+    // đánh giá bằng chữ
+    public string getDanhGiaBangChu(double diem)
+    {
+        var result = "";
+        if (diem >= 0 && diem <= 3)
+        {
+            result = "Rất tệ";
+        }
+        else if (diem > 3 && diem <= 3.5)
+        {
+            result = "Tệ";
+        }
+        else if (diem > 3.5 && diem <= 4)
+        {
+            result = "Bình thường";
+        }
+        else if (diem > 4 && diem <= 4.5)
+        {
+            result = "Tốt";
+        }
+        else
+        {
+            result = "Rất tốt";
+        }
+        return result;
+    }
+
+    // lấy toàn bộ tỉnh thành
+    public List<TinhThanh> getAllTinhThanh()
+    {
+        var list = db.TinhThanhs.ToList();
+        return list;
+    }
+
+    // lấy ra tiện nghi của khách sạn
+    public List<TienNghi> getAllTienNghiOfKhachSan(int? idKs)
+    {
+        // Kiểm tra idP có giá trị không
+        if (idKs == null) return new List<TienNghi>();  // Trả về danh sách rỗng nếu idP là null
+
+        var result = db.KhachSanTienNghis
+               .Where(ktn => ktn.IdKhachSan == idKs) // Sử dụng tham số idP
+               .Join(db.TienNghis,
+                     ktn => ktn.IdTienNghi,
+                     tn => tn.Id,
+                     (ktn, tn) => tn)  // Trả về các đối tượng TienNghi
+               .ToList();  // Chuyển kết quả thành List
+
+        return result;
+    }
+}
+
+@foreach (var item in Model)
+{
+    @if (item.IsDelete == false)
+    {
+        <div class="listing-item">
+            <article class="geodir-category-listing fl-wrap">
+                <div class="geodir-category-img">
+                    <a href="/phong/chitietkhachsan?id=@item.Id">
+                        <img style="max-height: 302px; object-fit: cover;" src="@Url.Content("~/Images/khachsan/"+item.AnhDaiDien)" alt="">
+                    </a>
+                    <div class="listing-avatar">
+                        <a href="author-single.html"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
+                        <span class="avatar-tooltip">Được thêm bởi  <strong>Admin</strong></span>
+                    </div>
+                    <div class="sale-window big-sale">Sale 70%</div>
+                    <div class="geodir-category-opt">
+                        <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
+                        <div class="rate-class-name">
+                            <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@getAllDanhGiaByIdKs(item.Id).Count() Đánh giá </div>
+                            <span>@getDiemTBAllById(item.Id)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="geodir-category-content fl-wrap title-sin_item">
+                    <div class="geodir-category-content-title fl-wrap">
+                        <div class="geodir-category-content-title-item">
+                            <h3 class="title-sin_map">
+                                <a href="/phong/chitietkhachsan?id=@item.Id">
+                                    @{
+                                        string tenKhachSan = item.TenKhachSan;
+                                        if (tenKhachSan.Length > 30) // Giới hạn 20 ký tự
+                                        {
+                                            tenKhachSan = tenKhachSan.Substring(0, 30) + "..."; // Cắt chuỗi và thêm dấu ba chấm
+                                        }
+                                        @tenKhachSan
+                                    }
+                                </a>
+                            </h3>
+                            <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> @item.DiaChi</a></div>
+                        </div>
+                    </div>
+                    <p>
+                        @{
+                            // Giới hạn số ký tự của item.GioiThieu
+                            string gioiThieu = item.GioiThieu;
+                            int gioiHanKyTu = 250; // Số ký tự tối đa mong muốn
+                            if (gioiThieu.Length > gioiHanKyTu)
+                            {
+                                gioiThieu = gioiThieu.Substring(0, gioiHanKyTu) + "...";
+                            }
+                            @gioiThieu
+                        }
+                    </p>
+                    <ul class="facilities-list fl-wrap">
+                        @foreach (var tn_ks in getAllTienNghiOfKhachSan(@item.Id).Take(4))
+                        {
+                            <li><i class="@tn_ks.IconTienNghi"></i><span>@tn_ks.TenTienNghi</span></li>
+                        }
+                    </ul>
+                    <div class="geodir-category-footer fl-wrap">
+                        <div class="geodir-opt-link">
+                            <div class="geodir-category-price">1 ĐÊM/ <span>@string.Format("{0:N0} VNĐ", @getGiaTrungBinhKS(item.Id))</span></div>
+                        </div>
+                        <div class="geodir-opt-list">
+                            @*<a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>*@
+                            <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Lưu</span></a>
+                            @*<a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Tìm chỉ đường</span></a>*@
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    }
+}

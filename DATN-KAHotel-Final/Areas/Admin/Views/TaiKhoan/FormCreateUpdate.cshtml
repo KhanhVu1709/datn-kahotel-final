@@ -1,0 +1,186 @@
+﻿@model DATN_KAHotel_Final.Models.TaiKhoan
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using DATN_KAHotel_Final.Models
+
+@{
+    ViewData["Title"] = "FormCreateUpdateUser";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@functions {
+    QlksContext db = new QlksContext();
+    public bool getActiveAccount(string ten_dang_nhap)
+    {
+        var trangThai = (from u in db.TaiKhoans 
+                        where u.TenDangNhap == ten_dang_nhap
+                        select u.TrangThai).FirstOrDefault();
+        if(trangThai == true)
+        {
+            return true;
+        }
+        return false;
+    }
+}
+
+<style>
+    .AnhDaiDien {
+        height: 215px;
+        width: 215px;
+        border-radius: 50%; /* Làm tròn hình ảnh */
+        object-fit: cover; /* Đảm bảo hình ảnh không bị vỡ khi làm tròn */
+    }
+
+    form {
+        display: flex;
+        justify-content: space-around;
+    }
+    .left {
+        min-height: 320px;
+    }
+
+    .right {
+        padding-left: 15px;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        /*border: 1px solid #ccc;*/
+        padding: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3498db; /* Màu viền khi input được focus */
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Hiệu ứng shadow khi focus */
+    }
+
+    .tieude {
+        text-align: center;
+    }
+
+    .left .form-group {
+        display: flex;
+        justify-content: center;
+    }
+
+    .left, .right {
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        border-radius: 0.25rem;
+    }
+
+    .control-label {
+        font-weight: bolder !important;
+    }
+
+    .form-group input {
+        border: 1px solid black;
+    }
+</style>
+
+<hr />
+
+<div class="row">
+        <form action="@ViewBag.action" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="col-md-4 left">
+                <div class="form-group">
+                    @if (Model != null && Model.Anh != null)
+                    {
+                        <img src="@Url.Content("~/Images/taikhoan/"+Model.Anh)" alt="Hình ảnh" class="AnhDaiDien">
+                    } else {
+                        <img src="~/Images/taikhoan/avatar5.png" alt="Hình ảnh" class="AnhDaiDien" />
+                    }
+                </div>
+                <div class="form-group">
+                    <input type="file" asp-for="Anh" name="Anh" class="form-control" />
+                    <span asp-validation-for="Anh" class="text-danger"></span>
+                </div>
+            </div>
+            
+            <div class="col-md-7 right">
+                <div class="form-group">
+                    <p style="color: red;">@TempData["Error"]</p>
+                    <label asp-for="TenDangNhap" class="control-label"></label>
+                    <input asp-for="TenDangNhap" name="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập"/>
+                <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="MatKhau" class="control-label"></label>
+                    @if(Model != null)
+                    {
+                        <input type="password" asp-for="MatKhau" name="MatKhau" class="form-control" placeholder="Nếu không thay đổi mật khẩu thì không nhập vào ô này"/>
+                    } else
+                    {
+                        <input asp-for="MatKhau" name="MatKhau" class="form-control" placeholder="Nhập mật khẩu"/>
+                    }
+                
+                    <span asp-validation-for="MatKhau" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="HoTen" class="control-label">Họ và tên</label>
+                    <input asp-for="HoTen" name="HoTen" class="form-control" placeholder="Nhập họ và tên" />
+                    <span asp-validation-for="HoTen" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label">Email</label>
+                    <input asp-for="Email" name="Email" class="form-control" type="email" placeholder="Nhập email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SoDienThoai" class="control-label">Số điện thoại</label>
+                    <input asp-for="SoDienThoai" name="SoDienThoai" class="form-control" type="number" placeholder="Số điện thoại" />
+                    <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+                </div>
+            <div class="form-group">
+                <label asp-for="NgaySinh" class="control-label">Ngày sinh</label>
+                <input asp-for="NgaySinh" name="NgaySinh" class="form-control" type="date" />
+                <span asp-validation-for="NgaySinh" class="text-danger"></span>
+            </div>
+                <div class="form-group">
+                    <label class="control-label">Trạng thái</label><br>
+                    @if(Model != null)
+                    {
+                        <input type="radio" @(getActiveAccount(Model.TenDangNhap) ? "checked" : "") asp-for="TrangThai" value="1" name="TrangThai" id="active" />
+                        <label for="active">Hoạt động</label><br>
+                        <input type="radio" @(getActiveAccount(Model.TenDangNhap) ? "" : "checked") asp-for="TrangThai" value="0" name="TrangThai" id="locked" />
+                        <label for="locked">Đã khoá</label><br>
+                    } else
+                    {
+                        <input type="radio" checked asp-for="TrangThai" value="1" name="TrangThai" id="active" />
+                        <label for="active">Hoạt động</label>
+                        <input type="radio" asp-for="TrangThai" value="0" name="TrangThai" id="locked" />
+                        <label for="locked">Đã khoá</label>
+                    }
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Lưu" class="btn btn-primary" />
+                </div>
+            </div>
+            
+        </form>
+</div>
+
+<script>
+    // Lắng nghe sự kiện khi người dùng chọn file ảnh
+    document.querySelector('input[type="file"]').addEventListener('change', function () {
+        // Kiểm tra xem đã chọn file hay chưa
+        if (this.files && this.files[0]) {
+            var reader = new FileReader(); // Tạo đối tượng FileReader
+
+            // Đọc dữ liệu từ file ảnh được chọn
+            reader.onload = function (e) {
+                // Gán dữ liệu đọc được cho thuộc tính src của thẻ img
+                document.querySelector('.AnhDaiDien').setAttribute('src', e.target.result);
+            }
+
+            // Đọc file ảnh được chọn dưới dạng URL Data
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+</script>

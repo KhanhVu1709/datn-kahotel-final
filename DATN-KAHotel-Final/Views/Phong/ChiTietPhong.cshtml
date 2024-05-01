@@ -1,0 +1,119 @@
+﻿@{
+    Layout = null;
+}
+
+@model Phong
+
+@functions {
+    QlksContext db = new QlksContext();
+
+    public List<HinhAnh> getAllHinhById(int id)
+    {
+        List<HinhAnh> list = db.HinhAnhs.Where(h => h.IdPhong == id).ToList();
+        return list;
+    }
+
+
+    // lấy tất cả tiện nghi của phòng
+    public List<TienNghi> getAllTienNghiOfPhong(int? idP)
+    {
+        // Kiểm tra idP có giá trị không
+        if (idP == null) return new List<TienNghi>();  // Trả về danh sách rỗng nếu idP là null
+
+        var result = db.PhongTienNghis
+               .Where(ptn => ptn.IdPhong == idP) // Sử dụng tham số idP
+               .Join(db.TienNghis,
+                     ptn => ptn.IdTienNghi,
+                     tn => tn.Id,
+                     (ptn, tn) => tn)  // Trả về các đối tượng TienNghi
+               .ToList();  // Chuyển kết quả thành List
+
+        return result;
+    }
+}
+
+@{
+    // Gọi hàm getAllHinhById để lấy danh sách tên hình ảnh
+    var imageNames = getAllHinhById(Model.Id);
+    var imageList = new List<string>();
+
+    // Tạo danh sách đường dẫn từ tên hình ảnh
+    foreach (var imageName in imageNames)
+    {
+        var imagePath = Url.Content("~/Images/phong/" + imageName.UrlHinhAnh);
+        imageList.Add(imagePath);
+    }
+
+    // Tạo chuỗi JSON cho danh sách hình ảnh
+    var jsonPaths = "[";
+    for (int i = 0; i < imageList.Count; i++)
+    {
+        jsonPaths += "{\'src\': \'" + imageList[i] + "\'}";
+        if (i < imageList.Count - 1)
+        {
+            jsonPaths += ", ";
+        }
+    }
+    jsonPaths += "]";
+}
+
+<!--ajax-modal-wrap -->
+<div class="ajax-modal-wrap fl-wrap">
+    <div class="ajax-modal-close"><i class="fal fa-times"></i></div>
+    <!--ajax-modal-item-->
+    <div class="ajax-modal-item fl-wrap">
+        <div class="ajax-modal-media fl-wrap" style="margin-top: 70px;">
+            <img src="images/gal/5.html" alt="">
+            <div class="ajax-modal-title">
+                <div class="section-title-separator"><span></span></div>
+                @Model.TenPhong
+            </div>
+            <div style="margin-top: 70px;" class="ajax-modal-photos-btn dynamic-gal" data-dynamicPath="@jsonPaths">Ảnh (<span>@imageList.Count</span>)</div>
+        </div>
+        <div class="ajax-modal-list fl-wrap">
+            <ul>
+                <li>
+                    <i class="fal fa-user-alt"></i>
+                    <h5><span>@Model.SoNguoi</span> người</h5>
+                </li>
+                <li>
+                    <i class="fal fa-chalkboard"></i>
+                    <h5><span>@Model.KichThuocPhong</span> m²</h5>
+                </li>
+                <li>
+                    <i class="fal fa-bed"></i>
+                    <h5><span>@Model.SoGiuong</span> giường</h5>
+                </li>
+                <li>
+                    <i class="fal fa-hand-holding-usd"></i>
+                    <h5><span>@string.Format("{0:N0} VNĐ", Model.GiaPhong)</span> / đêm</h5>
+                </li>
+            </ul>
+        </div>
+        <div class="ajax-modal-details fl-wrap">
+            <!--ajax-modal-details-box-->
+            <div class="ajax-modal-details-box">
+                <h3>Chi tiết</h3>
+                <p>@Model.MoTa</p>
+            </div>
+            <!--ajax-modal-details-box end-->
+            <!--ajax-modal-details-box-->
+            <div class="ajax-modal-details-box">
+                <h3>Tiện nghi phòng</h3>
+                <div class="listing-features fl-wrap">
+                    <ul>
+                        @foreach(var item in getAllTienNghiOfPhong(Model.Id))
+                        {
+                            <li><i class="@item.IconTienNghi"></i> @item.TenTienNghi</li>
+                        }
+                        
+                    </ul>
+                </div>
+            </div>
+            <!--ajax-modal-details-box end-->
+            <a href="/phong/checkout?id=@Model.Id&ngayDen=@Context.Session.GetString("bat_dau")&ngayDi=@Context.Session.GetString("ket_thuc")" class="btn float-btn color2-bg">Đặt ngay<i class="fas fa-caret-right"></i></a>
+        </div>
+    </div>
+    <!--ajax-modal-item-->
+</div>
+<!--ajax-modal-wrap end -->

@@ -1,0 +1,347 @@
+﻿@model DATN_KAHotel_Final.Models.Phong
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "FormCreateUpdate";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    #them-anh {
+        background-color: red;
+        color: white;
+        padding: 8px
+    }
+
+    /*form {
+        display: flex;
+        justify-content: space-around;
+    }*/
+
+    .form-size {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        /*border: 1px solid #ccc;*/
+        padding: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-check {
+        display: flex;
+        padding-left: 45px !important;
+    }
+
+    .form-check-label {
+        margin-left: 0.2rem !important;
+    }
+
+    .form-right {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .control-label {
+        font-weight: bolder !important;
+    }
+
+    .form-group input {
+        border: 1px solid black;
+    }
+
+    .left, .right {
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        border-radius: 0.25rem;
+    }
+
+    .right {
+        min-height: 450px;
+    }
+
+    .size {
+        display: inline-flex;
+    }
+
+    textarea {
+        resize: both; /* Cho phép thay đổi kích thước theo cả hai hướng */
+        max-width: 627px;
+        min-height: 64px;
+    }
+
+    /*form chọn tiện ích*/
+    .form-1 {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .form-group .size {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Khoảng cách giữa các checkbox */
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        padding: 0;
+    }
+
+    .form-check-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+
+        .form-check-input:checked {
+            border-color: #6c63ff;
+            background-color: #6c63ff;
+        }
+
+    .form-check-label {
+        margin-left: 8px;
+        font-size: 14px;
+        color: #555;
+    }
+</style>
+
+<hr />
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" action="@ViewBag.action" enctype="multipart/form-data">
+            <div id="step2" style="width: 100%" class="form-1">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+
+                <div class="col-md-7 left">
+                    <div class="form-group">
+                        <label asp-for="TenPhong" class="control-label">Tên phòng</label>
+                        <input asp-for="TenPhong" name="TenPhong" class="form-control" placeholder="Tên phòng" />
+                        <span asp-validation-for="TenPhong" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="GiaPhong" class="control-label">Giá phòng</label>
+                        <input asp-for="GiaPhong" name="GiaPhong" class="form-control" placeholder="Giá phòng" />
+                        <span asp-validation-for="GiaPhong" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SoNguoi" class="control-label">Số người</label>
+                        <input asp-for="SoNguoi" name="SoNguoi" class="form-control" placeholder="Số người" />
+                        <span asp-validation-for="SoNguoi" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SoGiuong" class="control-label">Số giường</label>
+                        <input asp-for="SoGiuong" name="SoGiuong" class="form-control" placeholder="Số giường" />
+                        <span asp-validation-for="SoGiuong" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="KichThuocPhong" class="control-label">Kích thước phòng</label>
+                        <input asp-for="KichThuocPhong" name="KichThuocPhong" class="form-control" placeholder="Kích thước phòng" />
+                        <span asp-validation-for="KichThuocPhong" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-size">
+                            <label class="control-label">Chọn tiện nghi</label>
+                            <div class="size">
+                                @if (ViewBag.tienNghiDaChon != null)
+                                {
+                                    @foreach (var tien_nghi in ViewBag.TienNghi)
+                                    {
+                                        <div class="form-check">
+                                            @{
+                                                var isSelected = false;
+                                            }
+
+                                            @foreach (var selected in ViewBag.tienNghiDaChon)
+                                            {
+                                                @*lắp tới khi tim được kích thước mà sản phẩm đó có.*@
+                                                if (selected == tien_nghi.TenTienNghi)
+                                                {
+                                                    isSelected = true;
+                                                    break;
+                                                }
+                                            }
+
+                                            @*sau khi tìm được sẽ đánh dấu checked vào thẻ input tiện nghi*@
+                                            <input type="checkbox" @(isSelected ? "checked" : "") class="form-check-input" name="tienNghi" value="@tien_nghi.Id" id="@($"tienNghis_{tien_nghi.TenTienNghi}")">
+                                            <label class="form-check-label" for="@($"tienNghis_{tien_nghi.TenTienNghi}")">@tien_nghi.TenTienNghi</label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    @foreach (var tien_nghi in ViewBag.TienNghi)
+                                    {
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" name="tienNghi" value="@tien_nghi.Id" id="@($"tienNghis_{tien_nghi.TenTienNghi}")">
+                                            <label class="form-check-label" for="@($"tienNghis_{tien_nghi.TenTienNghi}")">@tien_nghi.TenTienNghi</label>
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IdKhachSan" class="control-label">Khách sạn</label>
+                        <select asp-for="IdKhachSan" name="IdKhachSan" class="form-control" asp-items="ViewBag.IdKhachSan"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MoTa" class="control-label">Mô tả</label>
+                        <input asp-for="MoTa" name="MoTa" class="form-control" placeholder="Mô tả" />
+                        <span asp-validation-for="MoTa" class="text-danger"></span>
+                    </div>
+
+
+                </div>
+                <div class="col-md-4 right">
+                    <div class="form-group">
+                        <div class="form-right">
+                            <label asp-for="AnhDaiDien" class="control-label">Chọn ảnh</label>
+
+                            <div id="imageInputs">
+                                <input type="file" asp-for="AnhDaiDien" name="photo" class="form-control" onchange="previewImage(event)" multiple />
+                                <br />
+                            </div>
+                            <span asp-validation-for="AnhDaiDien" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+                    @*<!-- Nút "Thêm phòng" -->
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="addRoom()">Thêm phòng</button>
+                    </div>*@
+
+                    <div class="form-group">
+                        <input type="submit" value="Lưu" class="btn btn-primary" />
+                    </div>
+                </div>
+
+                
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+<script>
+    var roomFormCount = 1;
+
+    function addRoom() {
+        var index = $("#step2").length; // Số lượng phòng hiện có
+        var newIndex = index; // Chỉ số của phòng mới sẽ được thêm vào
+        var html = '<div style="width: 100%" class="form-1">' +
+            '<div asp-validation-summary="ModelOnly" class="text-danger"></div>' +
+            '<input type="hidden" name="Phongs[' + index + '].Id" asp-for="Phongs[' + index + '].Id" />' +
+
+            '<div class="col-md-7 left">' +
+            '<div class="form-group">' +
+            '<label asp-for="Phongs[' + index + '].TenPhong" class="control-label">Tên phòng</label>' +
+            '<input asp-for="Phongs[' + index + '].TenPhong" name="Phongs[' + index + '].TenPhong" class="form-control" placeholder="Tên phòng" />' +
+            '<span asp-validation-for="Phongs[' + index + '].TenPhong" class="text-danger"></span>' +
+            '</div>' +
+            '<div class="form-group">' +
+            '<label asp-for="Phongs[' + index + '].GiaPhong" class="control-label">Giá phòng</label>' +
+            '<input asp-for="Phongs[' + index + '].GiaPhong" name="Phongs[' + index + '].GiaPhong" class="form-control" placeholder="Giá phòng" />' +
+            '<span asp-validation-for="Phongs[' + index + '].GiaPhong" class="text-danger"></span>' +
+            '</div>' +
+            '<div class="form-group">' +
+            '<label asp-for="Phongs[' + index + '].IdKhachSan" class="control-label">Khách sạn</label>' +
+            '<select asp-for="Phongs[' + index + '].IdKhachSan" name="Phongs[' + index + '].IdKhachSan" class="form-control" asp-items="ViewBag.IdKhachSan"></select>' +
+            '</div>' +
+
+            '</div>' +
+            '<div class="col-md-4 right">' +
+            '<div class="form-group">' +
+            '<div class="form-right">' +
+            '<label asp-for="Phongs[' + index + '].AnhDaiDien" class="control-label">Chọn ảnh</label>' +
+
+            '<div id="imageInputs">' +
+            '<input type="file" name="Phongs[' + index + '].AnhDaiDien" class="form-control" onchange="previewImage(event)" multiple />' +
+            '<br />' +
+            '</div>' +
+            '<span asp-validation-for="Phongs[' + index + '].AnhDaiDien" class="text-danger"></span>' +
+            '</div>' +
+
+            '</div>' +
+
+            '<!-- Nút "Thêm phòng" -->' +
+            '<div class="form-group">' +
+            '<button type="button" class="btn btn-primary" onclick="addRoom()">Thêm phòng</button>' +
+            '</div>' +
+
+            '<div class="form-group">' +
+            '<input type="submit" value="Lưu" class="btn btn-primary" />' +
+            '</div>' +
+            '</div>' +
+
+            '</div>';
+        // Thêm HTML mới vào cuối danh sách các phòng
+        $("#step2").append(html);
+        newIndex = index++;
+    }
+
+
+</script>
+
+
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        var imagePreview = document.getElementById('imagePreview');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // them anh
+    var imageInputCount = 1;
+
+    function addImageInput() {
+        var imageInputs = document.getElementById('imageInputs');
+        var newInput = document.createElement('div');
+        var input = document.createElement('input');
+        var deleteButton = document.createElement('button');
+
+        newInput.className = 'form-group';
+        input.type = 'file';
+        input.name = 'photo' + imageInputCount;
+        input.className = 'form-control';
+
+        deleteButton.textContent = 'Xóa';
+        deleteButton.type = 'button'; // Loại bỏ submit mặc định của button
+        deleteButton.onclick = function () {
+            newInput.remove();
+        };
+
+        newInput.appendChild(input);
+        newInput.appendChild(deleteButton);
+        imageInputs.appendChild(newInput);
+        imageInputCount++;
+    }
+</script>
+
+

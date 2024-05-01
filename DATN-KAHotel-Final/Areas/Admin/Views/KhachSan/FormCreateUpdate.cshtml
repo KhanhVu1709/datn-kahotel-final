@@ -1,0 +1,320 @@
+﻿@model DATN_KAHotel_Final.Models.KhachSan
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "FormCreateUpdate";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<style>
+    #them-anh {
+        background-color: red;
+        color: white;
+        padding: 8px
+    }
+
+    form {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .form-size {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-control {
+        border-radius: 5px;
+        /*border: 1px solid #ccc;*/
+        padding: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .form-check {
+        display: flex;
+        padding-left: 45px !important;
+    }
+
+    .form-check-label {
+        margin-left: 0.2rem !important;
+    }
+
+    .form-right {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .control-label {
+        font-weight: bolder !important;
+    }
+
+    .form-group input {
+        border: 1px solid black;
+    }
+
+    .left, .right {
+        background-color: white;
+        padding: 20px;
+        box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+        border-radius: 0.25rem;
+    }
+
+    .right {
+        min-height: 450px;
+    }
+
+    .size {
+        display: inline-flex;
+    }
+
+    textarea {
+        resize: both; /* Cho phép thay đổi kích thước theo cả hai hướng */
+        max-width: 627px;
+        min-height: 64px;
+    }
+
+    /*form chọn tiện ích*/
+    .form-1 {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .form-group .size {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px; /* Khoảng cách giữa các checkbox */
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        padding: 0;
+    }
+
+    .form-check-input {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    }
+
+        .form-check-input:checked {
+            border-color: #6c63ff;
+            background-color: #6c63ff;
+        }
+
+    .form-check-label {
+        margin-left: 8px;
+        font-size: 14px;
+        color: #555;
+    }
+</style>
+
+<hr />
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <form method="post" action="@ViewBag.action" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="col-md-7 left">
+                <div class="form-group">
+                    <label asp-for="TenKhachSan" class="control-label">Tên khách sạn</label>
+                    <input asp-for="TenKhachSan" name="TenKhachSan" class="form-control" placeholder="Tên khách sạn" />
+                    <span asp-validation-for="TenKhachSan" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DiaChi" class="control-label">Địa chỉ</label>
+                    <input asp-for="DiaChi" name="DiaChi" class="form-control" placeholder="Địa chỉ" />
+                    <span asp-validation-for="DiaChi" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="IdTinhThanh" class="control-label">Tỉnh thành</label>
+                    <select asp-for="IdTinhThanh" name="IdTinhThanh" class="form-control" asp-items="ViewBag.IdTinhThanh"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SoSao" class="control-label">Số sao</label>
+                    <select asp-for="SoSao" name="SoSao" class="form-control">
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="1">1</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div class="form-size">
+                        <label class="control-label">Chọn tiện nghi</label>
+                        <div class="size">
+                            @if (ViewBag.tienNghiDaChon != null)
+                            {
+                                @foreach (var tien_nghi in ViewBag.TienNghi)
+                                {
+                                    <div class="form-check">
+                                        @{
+                                            var isSelected = false;
+                                        }
+
+                                        @foreach (var selected in ViewBag.tienNghiDaChon)
+                                        {
+                                            @*lắp tới khi tim được kích thước mà sản phẩm đó có.*@
+                                            if (selected == tien_nghi.TenTienNghi)
+                                            {
+                                                isSelected = true;
+                                                break;
+                                            }
+                                        }
+
+                                        @*sau khi tìm được sẽ đánh dấu checked vào thẻ input tiện nghi*@
+                                        <input type="checkbox" @(isSelected ? "checked" : "") class="form-check-input" name="tienNghi" value="@tien_nghi.Id" id="@($"tienNghis_{tien_nghi.TenTienNghi}")">
+                                        <label class="form-check-label" for="@($"tienNghis_{tien_nghi.TenTienNghi}")">@tien_nghi.TenTienNghi</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var tien_nghi in ViewBag.TienNghi)
+                                {
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" name="tienNghi" value="@tien_nghi.Id" id="@($"tienNghis_{tien_nghi.TenTienNghi}")">
+                                        <label class="form-check-label" for="@($"tienNghis_{tien_nghi.TenTienNghi}")">@tien_nghi.TenTienNghi</label>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="GioiThieu" class="control-label">Giới thiệu</label>
+                    <textarea asp-for="GioiThieu" name="GioiThieu" class="form-control" placeholder="Giới thiệu"></textarea>
+                    <span asp-validation-for="GioiThieu" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-4 right">
+                <div class="form-group">
+                    <div class="form-right">
+                        <label asp-for="AnhDaiDien" class="control-label">Chọn ảnh</label>
+
+                        <div id="imageInputs">
+                            <input type="file" asp-for="AnhDaiDien" name="photo" class="form-control" onchange="previewImage(event)" />
+                            <br />
+                        </div>
+                        <span asp-validation-for="AnhDaiDien" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div class="form-right">
+                        <label class="control-label">Hình ảnh khách sạn</label>
+                        <br />
+                        @if (Model != null && Model.AnhDaiDien != null)
+                        {
+                            <img src="@Url.Content("~/Images/khachsan/"+@Model.AnhDaiDien)" id="imagePreview" alt="Hình ảnh sản phẩm" style="max-width: 200px; max-height: 200px; margin: auto;" />
+                        }
+                        else
+                        {
+                            <img src="~/Images/no-image.png" id="imagePreview" alt="Hình ảnh sản phẩm" style="max-width: 200px; max-height: 200px; margin: auto;" />
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Lưu" class="btn btn-primary" id="saveBtn" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Lưu và thêm phòng" class="btn btn-primary" id="saveAndAddRoomBtn" />
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        var input = event.target;
+        var imagePreview = document.getElementById('imagePreview');
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // them anh
+    var imageInputCount = 1;
+
+    function addImageInput() {
+        var imageInputs = document.getElementById('imageInputs');
+        var newInput = document.createElement('div');
+        var input = document.createElement('input');
+        var deleteButton = document.createElement('button');
+
+        newInput.className = 'form-group';
+        input.type = 'file';
+        input.name = 'photo' + imageInputCount;
+        input.className = 'form-control';
+
+        deleteButton.textContent = 'Xóa';
+        deleteButton.type = 'button'; // Loại bỏ submit mặc định của button
+        deleteButton.onclick = function () {
+            newInput.remove();
+        };
+
+        newInput.appendChild(input);
+        newInput.appendChild(deleteButton);
+        imageInputs.appendChild(newInput);
+        imageInputCount++;
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var url = window.location.href;
+        var isCreate = url.includes("/admin/khachsan/create");
+        var isUpdate = url.includes("/admin/khachsan/update");
+
+        if (isCreate) {
+            document.getElementById('saveBtn').addEventListener('click', function () {
+                this.form.action = '@Url.Action("CreatePost", "KhachSan")'; // Thay đổi action cho nút Lưu
+                this.form.submit();
+            });
+
+            document.getElementById('saveAndAddRoomBtn').addEventListener('click', function () {
+                this.form.action = '@Url.Action("CreatePostAndAddRoom", "KhachSan")'; // Thay đổi action cho nút Lưu và Thêm Phòng
+                this.form.submit();
+            });
+        }
+
+        if (isUpdate) {
+            document.getElementById('saveBtn').addEventListener('click', function () {
+                this.form.action = '@Url.Action("UpdatePost", "KhachSan")'; // Thay đổi action cho nút Cập nhật
+                this.form.submit();
+            });
+
+            document.getElementById('saveAndAddRoomBtn').addEventListener('click', function () {
+                this.form.action = '@Url.Action("UpdatePostAndAddRoom", "KhachSan")'; // Thay đổi action cho nút Lưu và Thêm Phòng
+                this.form.submit();
+            });
+        }
+    });
+</script>
+
+
+
+

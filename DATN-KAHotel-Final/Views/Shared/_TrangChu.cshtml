@@ -1,0 +1,450 @@
+﻿@{
+    Layout = null;
+}
+
+@functions {
+    QlksContext db = new QlksContext();
+
+    public List<TinhThanh> getAllTinhThanh()
+    {
+        var list = db.TinhThanhs.ToList();
+        return list;
+    }
+
+    public int getCountKhachSanById(int idTinh)
+    {
+        var query = from t in db.TinhThanhs
+                    join k in db.KhachSans on t.Id equals k.IdTinhThanh
+                    where t.Id == idTinh && k.IsDelete == false
+                    group k by t.Id into g
+                    select g.Count();
+
+        return query.FirstOrDefault();
+    }
+
+    public List<TinhThanh> getTinhThanhOrderByKhachSan()
+    {
+        var tinhThanhs = db.TinhThanhs
+                            .Select(t => new
+                            {
+                                TinhThanh = t,
+                                SoLuongKhachSan = t.KhachSans.Count()
+                            })
+                            .OrderByDescending(x => x.SoLuongKhachSan)
+                            .Take(5)
+                            .ToList();
+
+        return tinhThanhs.Select(x => x.TinhThanh).ToList();
+    }
+}
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<!-- Mirrored from easybook.kwst.net/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:12:09 GMT -->
+<head>
+    <!--=============== basic  ===============-->
+    <meta charset="UTF-8">
+    <title>Easybook - Hotel Booking Directory Listing Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <!--=============== css  ===============-->
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/plugins.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/style.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/color.css">
+    <style>
+        body {
+            background-color: #544537;
+        }
+
+        .main-header, .footer-inner {
+            background-color: #544537;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+            list-style-type: none;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            top: 100%;
+            border-radius: 2px;
+        }
+
+        .suggestions-list li {
+            padding: 15px;
+            cursor: pointer;
+            text-align: left;
+            height: 100%;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .suggestions-list li i {
+            padding-left: 10px;
+            padding-right: 10px;
+            color: blue;
+        }
+
+        .suggestions-list li:hover {
+            background-color: #F9B90F;
+        }
+    </style>
+    <!--=============== favicons ===============-->
+    <link rel="shortcut icon" href="../LayoutHotel/images/favicon.ico">
+</head>
+<body>
+    <!--loader-->
+    <div class="loader-wrap">
+        <div class="pin">
+            <div class="pulse"></div>
+        </div>
+    </div>
+    <!--loader end-->
+    <!-- Main  -->
+    <div id="main">
+        <!-- header-->
+        @await Html.PartialAsync("_PartialHeader")
+        <!--  header end -->
+        <!--  wrapper  -->
+        <div id="wrapper">
+            <!-- content-->
+            <div class="content">
+                <!--section -->
+                <section class="hero-section" data-scrollax-parent="true" id="sec1">
+                    <div class="hero-parallax">
+                        <div class="bg" data-bg="../LayoutHotel/images/bg/22.jpg" data-scrollax="properties: { translateY: '200px' }"></div>
+                        <div class="overlay op7"></div>
+                    </div>
+                    <div class="hero-section-wrap fl-wrap">
+                        <div class="container">
+                            <div class="home-intro">
+                                <div class="section-title-separator"><span></span></div>
+                                <h2>EasyBook Hotel Booking System</h2>
+                                <span class="section-separator"></span>
+                                <h3>Let's start exploring the world together with EasyBook</h3>
+                            </div>
+                            @if (TempData["ErrorMessage"] != null)
+                            {
+                                <script>
+                                    window.onload = function () {
+                                        alert('@Html.Raw(TempData["ErrorMessage"])');
+                                    };
+                                </script>
+                            }
+                            <div class="main-search-input-wrap">
+                                <div class="main-search-input fl-wrap">
+                                    <div class="main-search-input-item location" id="autocomplete-container">
+                                        <span class="inpt_dec"><i class="fal fa-map-marker"></i></span>
+                                        <input type="text" placeholder="Thành phố" class="autocomplete-input" id="autocompleteid2" name="main-input-city" value="" />
+                                        <a href="#"><i class="fal fa-dot-circle"></i></a>
+                                        <div id="suggestionsList" class="suggestions-list"></div>
+                                        <input type="hidden" id="selectedCityId" name="selectedCityId" value="" />
+
+                                    </div>
+                                    <div class="main-search-input-item main-date-parent main-search-input-item_small">
+                                        <span class="inpt_dec"><i class="fal fa-calendar-check"></i></span> <input type="text" placeholder="Thời gian" name="main-input-search" value="" />
+                                    </div>
+                                    <div class="main-search-input-item">
+                                        <div class="qty-dropdown fl-wrap">
+                                            <div class="qty-dropdown-header fl-wrap"><i class="fal fa-users"></i> Người</div>
+                                            <div class="qty-dropdown-content fl-wrap">
+                                                <div class="quantity-item">
+                                                    <label><i class="fas fa-male"></i> Người lớn</label>
+                                                    <div class="quantity">
+                                                        <input type="number" min="1" max="3" step="1" value="1">
+                                                    </div>
+                                                </div>
+                                                <div class="quantity-item">
+                                                    <label><i class="fas fa-child"></i> Trẻ em</label>
+                                                    <div class="quantity">
+                                                        <input type="number" min="0" max="3" step="1" value="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="main-search-button color2-bg" id="searchMain">Tìm kiếm <i class="fal fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="header-sec-link">
+                        <div class="container"><a href="#sec2" class="custom-scroll-link color-bg"><i class="fal fa-angle-double-down"></i></a></div>
+                    </div>
+                </section>
+                <!-- section end -->
+                <!--section -->
+                <section id="sec2">
+                    <div class="container">
+                        <div class="section-title">
+                            <div class="section-title-separator"><span></span></div>
+                            <h2>Điểm đến phổ biến</h2>
+                            <span class="section-separator"></span>
+                            <p>Khám phá một số gợi ý tốt nhất từ khắp thành phố từ các đối tác và bạn bè của chúng tôi.</p>
+                        </div>
+                    </div>
+                    <!-- portfolio start -->
+                    <div class="gallery-items fl-wrap mr-bot spad home-grid">
+                        <!-- gallery-item-->
+                        @foreach (var item in getTinhThanhOrderByKhachSan())
+                        {
+                            <div class="gallery-item">
+                                <div class="grid-item-holder">
+                                    <div class="listing-item-grid">
+                                        <div class="listing-counter"><span>@getCountKhachSanById(item.Id) </span> Khách sạn</div>
+                                        <img src="@Url.Content("~/Images/tinhthanh/"+item.AnhDaiDien)" alt="">
+                                        <div class="listing-item-cat">
+                                            <h3><a href="/phong/timkiemphong?idTinh=@item.Id">@item.TenTinh</a></h3>
+                                            <div class="weather-grid" data-grcity="@item.TenTinh"></div>
+                                            <div class="clearfix"></div>
+                                            <p>Constant care and attention to the patients makes good record</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        <!-- gallery-item end-->
+                    </div>
+                    <!-- portfolio end -->
+                    <a href="#" class="btn color-bg">Xem thêm<i class="fas fa-caret-right"></i></a>
+
+                </section>
+                <!-- section end -->
+                <!-- section-->
+                <section class="grey-blue-bg">
+                    <!-- container-->
+                    <div class="container">
+                        <div class="section-title">
+                            <div class="section-title-separator"><span></span></div>
+                            <h2>Khách sạn mới thêm gần đây</h2>
+                            <span class="section-separator"></span>
+                            <p>Tất cả các phòng được trang bị đầy đủ tiện nghi, đảm bảo một kỳ nghỉ thoải mái và đáng nhớ.</p>
+                        </div>
+                    </div>
+                    <!-- container end-->
+                    <!-- carousel -->
+                    <div class="list-carousel fl-wrap card-listing ">
+                        <!--listing-carousel-->
+                        <div class="listing-carousel  fl-wrap ">
+                            <!--slick-slide-item-->
+
+
+                            @RenderBody()
+
+
+                            <!--slick-slide-item end-->
+                        </div>
+                        <!--listing-carousel end-->
+                        <div class="swiper-button-prev sw-btn"><i class="fa fa-long-arrow-left"></i></div>
+                        <div class="swiper-button-next sw-btn"><i class="fa fa-long-arrow-right"></i></div>
+                    </div>
+                    <!--  carousel end-->
+                </section>
+                <!-- section end -->
+                <!--section -->
+                <section class="parallax-section" data-scrollax-parent="true">
+                    <div class="bg" data-bg="../LayoutHotel/images/bg/2.jpg" data-scrollax="properties: { translateY: '100px' }"></div>
+                    <div class="overlay op7"></div>
+                    <!--container-->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="colomn-text fl-wrap pad-top-column-text_small">
+                                    <div class="colomn-text-title">
+                                        <h3>Khách sạn phổ biến nhất</h3>
+                                        <p>Trải nghiệm lưu trú tốt nhất tại điểm đến ưa thích của bạn!</p>
+                                        <a href="listing.html" class="btn  color2-bg float-btn">View All Hotels<i class="fas fa-caret-right"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <!--light-carousel-wrap-->
+                                <div class="light-carousel-wrap fl-wrap">
+                                    <!--light-carousel-->
+                                    <div class="light-carousel">
+                                        <!--slick-slide-item-->
+                                        <div class="slick-slide-item">
+                                            <div class="hotel-card fl-wrap title-sin_item">
+                                                <div class="geodir-category-img card-post">
+                                                    <a href="listing-single.html"><img src="../LayoutHotel/images/gal/8.jpg" alt=""></a>
+                                                    <div class="listing-counter">Awg/Night <strong>$85</strong></div>
+                                                    <div class="sale-window">Sale 20%</div>
+                                                    <div class="geodir-category-opt">
+                                                        <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                                        <h4 class="title-sin_map"><a href="listing-single.html">Moonlight Hotel</a></h4>
+                                                        <div class="geodir-category-location"><a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fas fa-map-marker-alt"></i> 75 Prince St,  NY, USA</a></div>
+                                                        <div class="rate-class-name">
+                                                            <div class="score"><strong> Good</strong>8 Reviews </div>
+                                                            <span>4.8</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--slick-slide-item end-->
+                                        <!--slick-slide-item-->
+                                        <div class="slick-slide-item">
+                                            <div class="hotel-card fl-wrap title-sin_item">
+                                                <div class="geodir-category-img">
+                                                    <a href="listing-single.html"><img src="../LayoutHotel/images/gal/7.jpg" alt=""></a>
+                                                    <div class="listing-counter">Awg/Night <strong>$80</strong></div>
+                                                    <div class="sale-window big-sale">Sale 50%</div>
+                                                    <div class="geodir-category-opt">
+                                                        <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                                        <h4 class="title-sin_map"><a href="listing-single.html">Holiday Home</a></h4>
+                                                        <div class="geodir-category-location"><a href="#" class="single-map-item" data-newlatitude="40.72228267" data-newlongitude="-73.99246214"><i class="fas fa-map-marker-alt"></i> 34-42 Montgomery St , NY, USA</a></div>
+                                                        <div class="rate-class-name">
+                                                            <div class="score"><strong> Good</strong>2 Reviews </div>
+                                                            <span>4.7</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--slick-slide-item end-->
+                                        <!--slick-slide-item-->
+                                        <div class="slick-slide-item">
+                                            <div class="hotel-card fl-wrap title-sin_item">
+                                                <div class="geodir-category-img">
+                                                    <a href="listing-single.html"><img src="../LayoutHotel/images/gal/9.jpg" alt=""></a>
+                                                    <div class="listing-counter">Awg/Night <strong>$120</strong></div>
+                                                    <div class="sale-window">Sale 10%</div>
+                                                    <div class="geodir-category-opt">
+                                                        <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
+                                                        <h4 class="title-sin_map"><a href="listing-single.html">Grand Hero Palace</a></h4>
+                                                        <div class="geodir-category-location"><a href="#" class="single-map-item" data-newlatitude="40.76221766" data-newlongitude="-73.96511769"><i class="fas fa-map-marker-alt"></i> 70 Bright St New York, USA</a></div>
+                                                        <div class="rate-class-name">
+                                                            <div class="score"><strong> Good</strong>31 Reviews </div>
+                                                            <span>4.9</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!--slick-slide-item end-->
+                                    </div>
+                                    <!--light-carousel end-->
+                                    <div class="fc-cont  lc-prev"><i class="fal fa-angle-left"></i></div>
+                                    <div class="fc-cont  lc-next"><i class="fal fa-angle-right"></i></div>
+                                </div>
+                                <!--light-carousel-wrap end-->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- section end -->
+            </div>
+            <!-- content end-->
+        </div>
+        <!--wrapper end -->
+        <!--footer -->
+        @await Html.PartialAsync("_PartialFooter")
+        <!--footer end -->
+        <!--map-modal -->
+        <div class="map-modal-wrap">
+            <div class="map-modal-wrap-overlay"></div>
+            <div class="map-modal-item">
+                <div class="map-modal-container fl-wrap">
+                    <div class="map-modal fl-wrap">
+                        <div id="singleMap" data-latitude="40.7" data-longitude="-73.1"></div>
+                    </div>
+                    <h3><i class="fal fa-location-arrow"></i><a href="#">Hotel Title</a></h3>
+                    <input id="pac-input" class="controls fl-wrap controls-mapwn" type="text" placeholder="What Nearby ?   Bar , Gym , Restaurant ">
+                    <div class="map-modal-close"><i class="fal fa-times"></i></div>
+                </div>
+            </div>
+        </div>
+        <!--map-modal end -->
+        <!--register form -->
+        <!--register form end -->
+        <a class="to-top"><i class="fas fa-caret-up"></i></a>
+    </div>
+    <!-- Main end -->
+    <!--=============== scripts  ===============-->
+    <script type="text/javascript" src="../LayoutHotel/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/plugins.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/scripts.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOYdeXNSuANfFSi3EY9-NaqxT_MHxHX3c;libraries=places&amp;callback=initAutocomplete"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/map-single.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#searchMain").on("click", function () {
+                // Lấy giá trị từ các trường input
+                var date = $("input[name='main-input-search']").val();
+                var selectCity = $("input[name='main-input-city']").val();
+                var selectedCityId = $("#selectedCityId").val();
+                if (date != "") {
+                    var dateArray = date.split(" - ");
+                    var startDate = dateArray[0];
+                    var endDate = dateArray[1];
+                    // Gửi dữ liệu đến controller
+                    $.ajax({
+                        type: "GET",
+                        url: "/phong/timkiemphong",
+                        data: {
+                            start: startDate,
+                            end: endDate,
+                            city: selectedCityId
+                        },
+                        success: function (response) {
+                            // Xử lý kết quả thành công
+                            window.location.href = "/phong/timkiemphong?IdTinh=" + selectedCityId + "&ngayDen=" + startDate + "&ngayDi=" + endDate;
+                        },
+                        error: function (error) {
+                            console.log("Error:", error);
+                        }
+                    });
+                }
+                else {
+                    alert("Vui lòng chọn ngày check-in và check-out");
+                }
+            });
+        });
+
+        $('#autocompleteid2').keyup(function () {
+            var query = $(this).val();
+            if (query.length >= 1) {
+                $.ajax({
+                    url: '/phong/GoiYTimKiem',
+                    type: 'GET',
+                    data: { query: query },
+                    success: function (data) {
+                        var suggestionsList = $('#suggestionsList');
+                        suggestionsList.empty();
+                        $.each(data, function (index, value) {
+                            suggestionsList.append('<li data-id=' + value.id + '> <i class="fal fa-map-marker-alt"></i>' + value.tenTinh + '</li>');
+                        });
+                        suggestionsList.show(); // Hiển thị danh sách gợi ý
+                    }
+                });
+            }
+        });
+
+        // Bổ sung sự kiện click vào body để ẩn danh sách gợi ý khi click bên ngoài input và danh sách gợi ý
+        $('body').on('click', function (e) {
+            if (!$(e.target).closest('.main-search-input-item').length) {
+                $('#suggestionsList').hide();
+            }
+        });
+
+        // Bổ sung sự kiện click vào mỗi item của danh sách gợi ý để điền giá trị vào input và ẩn danh sách gợi ý
+        $('#suggestionsList').on('click', 'li', function () {
+            var selectedSuggestion = $(this).text();
+            var selectedId = $(this).data('id');
+            $('#selectedCityId').val(selectedId);
+            $('#autocompleteid2').val(selectedSuggestion);
+            $('#suggestionsList').hide();
+        });
+
+    </script>
+</body>
+
+<!-- Mirrored from easybook.kwst.net/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:14:08 GMT -->
+</html>

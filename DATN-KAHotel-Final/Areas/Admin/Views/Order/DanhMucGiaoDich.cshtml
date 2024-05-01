@@ -1,0 +1,227 @@
+﻿@{
+    ViewData["Title"] = "DanhMucHoaDon";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@using X.PagedList.Mvc.Core
+@using DATN_KAHotel_Final.Areas.Admin.Models;
+@using DATN_KAHotel_Final.Models
+@model X.PagedList.IPagedList<ChiTietGiaoDich>
+
+<style>
+    td a {
+        font-size: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding-top: 16px;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    /* Định dạng cho bảng */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: monospace;
+    }
+
+    /* Định dạng cho các ô */
+    .table, th, td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid black;
+        text-align: center;
+    }
+
+        /* Định dạng cho dòng chẵn */
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Định dạng khi di chuột qua */
+        .table tr:hover {
+            background-color: #ddd;
+        }
+
+    /* Định dạng cho dropdown select */
+    .trangThaiSelect {
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    table p {
+        margin-top: 16px !important;
+        text-align: center;
+    }
+</style>
+
+<h1>Danh mục giao dịch</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                STT
+            </th>
+            <th>
+                Khách hàng
+            </th>
+            <th>
+                Tổng tiền
+            </th>
+            <th>
+                Thời gian
+            </th>
+            <th>
+                Trạng thái
+            </th>
+            <th>
+                Hành động
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <div>
+            @{
+                int i = 0;
+                string cla = "table-success";
+            }
+            @foreach (var item in Model)
+            {
+                cla = "table-success";
+                i += 1;
+                if (i % 2 == 0)
+                {
+                    cla = "table-warning";
+                }
+            <tr class="@cla">
+                <td>
+                        @i
+                </td>
+                <td>
+
+                    <ul>
+                        <li>Họ tên: @Html.DisplayFor(modelItem => item.HoTen)</li>
+                        <li>Email: @Html.DisplayFor(modelItem => item.Email)</li>
+                        <li>Phone: @Html.DisplayFor(modelItem => item.Sdt)</li>
+                    </ul>
+
+                </td>
+                <td>
+                        @if (@item.TongTien != null)
+                        {
+                            @string.Format("{0:N0} VNĐ", item.TongTien)
+                        }
+                        else
+                        {
+                        <p>0 VNĐ</p>
+                        }
+                </td>
+                <td>
+                    <ul>
+                        <li>Checkout: @Html.DisplayFor(modelItem => item.BatDau)</li>
+                        <li>Checkin: @Html.DisplayFor(modelItem => item.KetThuc)</li>
+                    </ul>
+                </td>
+                <td>
+                    <p class="@(item.TrangThai == "Hoàn tất" ? "btn-success" : (item.TrangThai == "Đã xác nhận" ? "btn-info" : (item.TrangThai == "Huỷ bỏ" ? "btn-danger" :(item.TrangThai == "Chưa xác nhận" ? "btn-warning" :  ""))))">@Html.DisplayFor(modelItem => item.TrangThai)</p>
+                </td>
+                <td>
+                    <select class="trangThaiSelect" data-hoadonid="@item.IdHoaDon">
+
+
+                            @foreach (var option in ViewBag.trangThai as List<TrangThaiDon>)
+                            {
+                                bool isSelected = false;  // Đảm bảo biến isSelected được reset trong mỗi vòng lặp
+                                if (item.TrangThai == option.TenTrangThai)
+                                {
+                                    isSelected = true;
+                                }
+
+                                if(item.TrangThai == "Huỷ bỏ")
+                                {
+                                    <option value="@option.Id" @(isSelected ? "selected" : "") disabled>@option.TenTrangThai</option>
+                                }
+                                else if (item.TrangThai == "Hoàn tất")
+                                {
+                                    <option value="@option.Id" @(isSelected ? "selected" : "") @(option.TenTrangThai == "Huỷ bỏ" ? "disabled" : "")>@option.TenTrangThai</option>
+                                }
+                                else
+                                {
+                                    <option value="@option.Id" @(isSelected ? "selected" : "")>@option.TenTrangThai</option>
+                                }
+                            }
+
+
+                    </select>
+
+                    @if(item.TrangThai == "Huỷ bỏ")
+                    {
+                        <a id="cancelButton" style="vertical-align: middle;" href="#"><i class="bx bx-show"></i></a>
+                    } else
+                    {
+                        <a style="vertical-align: middle;" href="/admin/order/invoice?idHoaDon=@item.IdHoaDon"><i class="bx bx-show"></i></a>
+                    }
+                    
+                </td>
+            </tr>
+            }
+        </div>
+    </tbody>
+</table>
+
+<div>
+    @if (Model.PageCount > 1)
+    {
+        <ul class="pagination">
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link" href="?page=1">&laquo;</a>
+            </li>
+            <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
+                <a class="page-link" href="?page=@Model.PageCount">&raquo;</a>
+            </li>
+        </ul>
+    }
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.trangThaiSelect').change(function () {
+            var selectedValue = $(this).val();
+            var hoaDonId = $(this).data('hoadonid');
+
+            $.ajax({
+                type: 'POST',
+                url: '/Admin/Order/UpdateTrangThai', // Địa chỉ xử lý trạng thái
+                data: { trangThai: selectedValue, hoaDonId: hoaDonId },
+                success: function (result) {
+                    // Xử lý kết quả trả về từ server (nếu cần)
+                    if (result.success) {
+                        window.location.reload();
+                    } else {
+                        alert(result.message); // Hiển thị thông báo lỗi cho người dùng
+                    }
+                },
+                error: function (error) {
+                    // Xử lý lỗi (nếu có)
+                    console.error('Có lỗi xảy ra khi cập nhật trạng thái');
+                }
+            });
+        });
+    });
+
+    // Lắng nghe sự kiện click trên nút
+    document.getElementById("cancelButton").addEventListener("click", function (event) {
+        // Ngăn chặn hành vi mặc định của liên kết
+        event.preventDefault();
+
+        // Hiển thị thông báo
+        alert("Đơn đã bị huỷ!!!");
+    });
+</script>

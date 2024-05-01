@@ -1,0 +1,571 @@
+﻿@{
+    Layout = null;
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<KhachSan>
+
+@functions {
+    // khoi tao doi tuong
+    QlksContext db = new QlksContext();
+
+    // giá trung bình các phòng của khách sạn
+    public double? getGiaTrungBinhKS(int idKs)
+    {
+        List<Phong> phongs = db.Phongs.Where(p => p.IdKhachSan == idKs).ToList();
+
+        double? giaTB = 0;
+
+        foreach (var item in phongs)
+        {
+            giaTB += item.GiaPhong;
+        }
+
+        return giaTB / phongs.Count();
+    }
+
+    // lấy danh sách đánh giá của khách sạn
+    public List<DanhGium> getAllDanhGiaByIdKs(int idKs)
+    {
+        var list = db.DanhGia.Where(d => d.IdKhachSan == idKs).OrderByDescending(t => t.Id).ToList();
+        return list;
+    }
+
+    // get all các tỉnh
+    //public List<TinhThanh> getAllTinhThanh()
+    //{
+    //    List<TinhThanh> listTinhs = db.TinhThanhs.ToList();
+
+    //    return listTinhs;
+    //}
+
+    // get tên tỉnh
+    //public string getTenTinhById(int? idTinh)
+    //{
+    //    var tinh = db.TinhThanhs.FirstOrDefault(t => t.Id == idTinh);
+    //    return tinh.TenTinh;
+    //}
+
+    public double getDiemTBAllById(int? idKs)
+    {
+        var list = db.DanhGia.Where(d => d.IdKhachSan == idKs).ToList();
+        double diemTB = 0;
+        foreach (var item in list)
+        {
+            diemTB += (double)(item.DiemThoaiMai + item.DiemNhanVien + item.DiemSachSe + item.DiemCoSo) / 4;
+        }
+        diemTB = diemTB / list.Count;
+        return Math.Round(diemTB, 1);
+    }
+
+    // đánh giá bằng chữ
+    public string getDanhGiaBangChu(double diem)
+    {
+        var result = "";
+        if (diem >= 0 && diem <= 3)
+        {
+            result = "Rất tệ";
+        }
+        else if (diem > 3 && diem <= 3.5)
+        {
+            result = "Tệ";
+        }
+        else if (diem > 3.5 && diem <= 4)
+        {
+            result = "Bình thường";
+        }
+        else if (diem > 4 && diem <= 4.5)
+        {
+            result = "Tốt";
+        }
+        else
+        {
+            result = "Rất tốt";
+        }
+        return result;
+    }
+
+    // lấy toàn bộ tỉnh thành
+    public List<TinhThanh> getAllTinhThanh()
+    {
+        var list = db.TinhThanhs.ToList();
+        return list;
+    }
+
+    // isSelected
+    public bool IsSelected(int id)
+    {
+        var idTinh = Context.Session.GetInt32("idTinh");
+        return id == idTinh;
+    }
+
+    // lấy tất cả tiện nghi của khách sạn
+    public List<TienNghi> getAllTienNghiOfKhachSan(int? idKs)
+    {
+        // Kiểm tra idP có giá trị không
+        if (idKs == null) return new List<TienNghi>();  // Trả về danh sách rỗng nếu idP là null
+
+        var result = db.KhachSanTienNghis
+               .Where(ktn => ktn.IdKhachSan == idKs) // Sử dụng tham số idP
+               .Join(db.TienNghis,
+                     ktn => ktn.IdTienNghi,
+                     tn => tn.Id,
+                     (ktn, tn) => tn)  // Trả về các đối tượng TienNghi
+               .ToList();  // Chuyển kết quả thành List
+
+        return result;
+    }
+}
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<!-- Mirrored from easybook.kwst.net/listing4.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:18:13 GMT -->
+<head>
+    <!--=============== basic  ===============-->
+    <meta charset="UTF-8">
+    <title>Easybook - Hotel Booking Directory Listing Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <!--=============== css  ===============-->
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/plugins.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/style.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/color.css">
+    <!--=============== favicons ===============-->
+    <link rel="shortcut icon" href="../LayoutHotel/images/favicon.ico">
+    <style>
+        body {
+            background-color: #544537;
+        }
+
+        .main-header, .footer-inner {
+            background-color: #544537;
+        }
+    </style>
+</head>
+<body>
+    <!--loader-->
+    <div class="loader-wrap">
+        <div class="pin">
+            <div class="pulse"></div>
+        </div>
+    </div>
+    <!--loader end-->
+    <!-- Main  -->
+    <div id="main">
+        <!-- header-->
+        @await Html.PartialAsync("_PartialHeader")
+        <!--  header end -->
+        <!--  wrapper  -->
+        <div id="wrapper">
+            <!-- content-->
+            <div class="content">
+                <!--  section  -->
+                <section class="parallax-section single-par" data-scrollax-parent="true">
+                    <div class="bg par-elem " data-bg="../LayoutHotel/images/bg/26.jpg" data-scrollax="properties: { translateY: '30%' }"></div>
+                    <div class="overlay"></div>
+                    <div class="container">
+                        <div class="section-title center-align big-title">
+                            <div class="section-title-separator"><span></span></div>
+                            <h2><span>KA Hotel</span></h2>
+                            <span class="section-separator"></span>
+                            <h4>Tạo Kỷ Niệm Đáng Nhớ - Khách Sạn Hòa Nhịp Cuộc Sống của Bạn!</h4>
+                        </div>
+                    </div>
+                    <div class="header-sec-link">
+                        <div class="container"><a href="#sec1" class="custom-scroll-link color-bg"><i class="fal fa-angle-double-down"></i></a></div>
+                    </div>
+                </section>
+                <!--  section  end-->
+                <div class="breadcrumbs-fs fl-wrap">
+                    <div class="container">
+                        <div class="breadcrumbs fl-wrap"><a href="/home/index">Trang chủ</a>@*<a href="#">Listing </a>*@<span>Tìm kiếm khách sạn</span></div>
+                    </div>
+                </div>
+                <!--  section-->
+                <section class="grey-blue-bg small-padding" id="sec1">
+                    <div class="container">
+                        <div class="row">
+                            <!--filter sidebar -->
+                            <div class="col-md-4">
+                                <div class="mobile-list-controls fl-wrap">
+                                    <div class="mlc show-list-wrap-search fl-wrap"><i class="fal fa-filter"></i> Filter</div>
+                                </div>
+                                <div class="fl-wrap filter-sidebar_item fixed-bar">
+                                    <div class="filter-sidebar fl-wrap lws_mobile">
+                                        <!--col-list-search-input-item -->
+                                        <div class="col-list-search-input-item in-loc-dec fl-wrap not-vis-arrow">
+                                            <label>Thành phố</label>
+                                            <div class="listsearch-input-item">
+                                                @{
+                                                    var idTinh = Context.Session.GetInt32("idTinh");
+                                                }
+                                                <select data-placeholder="City" class="chosen-select">
+                                                    @foreach (var item in getAllTinhThanh())
+                                                    {
+                                                        <option value="@item.Id" selected="@IsSelected(item.Id)">@item.TenTinh</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!--col-list-search-input-item end-->
+                                        <!--col-list-search-input-item -->
+                                        <div class="col-list-search-input-item fl-wrap location autocomplete-container">
+                                            <label>Điểm đến</label>
+                                            <span class="header-search-input-item-icon"><i class="fal fa-map-marker-alt"></i></span>
+                                            <input type="text" placeholder="Destination or Hotel Name" class="autocomplete-input" id="autocompleteid3" value="" />
+                                            <a href="#"><i class="fal fa-dot-circle"></i></a>
+                                        </div>
+                                        <!--col-list-search-input-item end-->
+                                        <!--col-list-search-input-item -->
+                                        <div class="col-list-search-input-item in-loc-dec date-container  fl-wrap">
+                                            <label>Ngày vào ra </label>
+                                            <span class="header-search-input-item-icon"><i class="fal fa-calendar-check"></i></span>
+                                            <input type="text" placeholder="Từ ngày" name="dates" value="" />
+                                        </div>
+                                        <div class="col-list-search-input-item fl-wrap">
+                                            <div class="range-slider-title">Phạm vi giá</div>
+                                            <div class="range-slider-wrap fl-wrap">
+                                                <input class="range-slider" data-from="800000" data-to="4000000" data-step="50000" data-min="500000" data-max="10000000" data-prefix="VNĐ">
+                                            </div>
+                                        </div>
+                                        <!--col-list-search-input-item end-->
+                                        <!--col-list-search-input-item -->
+                                        <div class="col-list-search-input-item fl-wrap">
+                                            <label>Đánh giá sao</label>
+                                            <div class="search-opt-container fl-wrap">
+                                                <!-- Checkboxes -->
+                                                <ul class="fl-wrap filter-tags">
+                                                    <li class="five-star-rating">
+                                                        <input id="check-aa2" type="checkbox" name="check" checked>
+                                                        <label for="check-aa2"><span class="listing-rating card-popup-rainingvis" data-starrating2="5"><span>5 Sao</span></span></label>
+                                                    </li>
+                                                    <li class="four-star-rating">
+                                                        <input id="check-aa3" type="checkbox" name="check">
+                                                        <label for="check-aa3"><span class="listing-rating card-popup-rainingvis" data-starrating2="5"><span>4 Sao</span></span></label>
+                                                    </li>
+                                                    <li class="three-star-rating">
+                                                        <input id="check-aa4" type="checkbox" name="check">
+                                                        <label for="check-aa4"><span class="listing-rating card-popup-rainingvis" data-starrating2="5"><span>3 Sao</span></span></label>
+                                                    </li>
+                                                </ul>
+                                                <!-- Checkboxes end -->
+                                            </div>
+                                        </div>
+                                        <!--col-list-search-input-item end-->
+                                        <!--col-list-search-input-item -->
+                                        <div class="col-list-search-input-item fl-wrap">
+                                            <label>Dịch vụ</label>
+                                            <div class="search-opt-container fl-wrap">
+                                                <!-- Checkboxes -->
+                                                <ul class="fl-wrap filter-tags half-tags">
+                                                    <li>
+                                                        <input id="check-aaa5" type="checkbox" name="check" checked>
+                                                        <label for="check-aaa5">Miễn phí wifi</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-bb5" type="checkbox" name="check">
+                                                        <label for="check-bb5">Bãi đậu xe</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-dd5" type="checkbox" name="check">
+                                                        <label for="check-dd5">Trung tâm thể thao</label>
+                                                    </li>
+                                                </ul>
+                                                <!-- Checkboxes end -->
+                                                <!-- Checkboxes -->
+                                                <ul class="fl-wrap filter-tags half-tags">
+                                                    <li>
+                                                        <input id="check-ff5" type="checkbox" name="check">
+                                                        <label for="check-ff5">Đưa đón sân bay</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-cc5" type="checkbox" name="check" checked>
+                                                        <label for="check-cc5">Không hút thuốc</label>
+                                                    </li>
+                                                    <li>
+                                                        <input id="check-c4" type="checkbox" name="check" checked>
+                                                        <label for="check-c4">Điều hòa không khí</label>
+                                                    </li>
+                                                </ul>
+                                                <!-- Checkboxes end -->
+                                            </div>
+                                        </div>
+                                        <!--col-list-search-input-item end-->
+                                        <!--col-list-search-input-item  -->
+                                        <div class="col-list-search-input-item fl-wrap">
+                                            <button class="header-search-button" id="searchButton">Tìm kiếm <i class="far fa-search"></i></button>
+                                        </div>
+                                        <!--col-list-search-input-item end-->
+                                    </div>
+                                </div>
+                            </div>
+                            <!--filter sidebar end-->
+                            <!--listing -->
+                            <div class="col-md-8">
+                                <!--col-list-wrap -->
+                                <div class="col-list-wrap fw-col-list-wrap post-container">
+                                    <!-- list-main-wrap-->
+                                    <div class="list-main-wrap fl-wrap card-listing">
+                                        <!-- list-main-wrap-opt-->
+                                        <div class="list-main-wrap-opt fl-wrap">
+                                            <div class="list-main-wrap-title fl-wrap col-title">
+                                                <h2>Kết quả tìm : <span> @ViewBag.TenTinh</span></h2>
+                                            </div>
+                                            <!-- price-opt-->
+                                            <div class="price-opt">
+                                                <span class="price-opt-title">Sắp xếp theo:</span>
+                                                <div class="listsearch-input-item">
+                                                    <select data-placeholder="Popularity" class="chosen-select no-search-select">
+                                                        <option>Phổ biến</option>
+                                                        <option>Đánh giá trung bình</option>
+                                                        <option>Giá: thấp đến cao</option>
+                                                        <option>Giá từ cao đến thấp</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!-- price-opt end-->
+                                            <!-- price-opt-->
+                                            <div class="grid-opt">
+                                                <ul>
+                                                    <li><span class="two-col-grid act-grid-opt"><i class="fas fa-th-large"></i></span></li>
+                                                    <li><span class="one-col-grid"><i class="fas fa-bars"></i></span></li>
+                                                </ul>
+                                            </div>
+                                            <!-- price-opt end-->
+                                        </div>
+                                        <!-- list-main-wrap-opt end-->
+                                        <!-- listing-item-container -->
+                                        <div class="listing-item-container init-grid-items fl-wrap" id="hotelList">
+                                            <!-- listing-item  -->
+                                            
+                                            @foreach(var item in Model)
+                                            {
+                                                @if(item.IsDelete == false)
+                                                {
+                                                    <div class="listing-item">
+                                                        <article class="geodir-category-listing fl-wrap">
+                                                            <div class="geodir-category-img">
+                                                                <a href="/phong/chitietkhachsan?id=@item.Id">
+                                                                    <img style="max-height: 302px; object-fit: cover;" src="@Url.Content("~/Images/khachsan/"+item.AnhDaiDien)" alt="">
+                                                                </a>
+                                                                <div class="listing-avatar">
+                                                                    <a href="author-single.html"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
+                                                                    <span class="avatar-tooltip">Được thêm bởi  <strong>Admin</strong></span>
+                                                                </div>
+                                                                <div class="sale-window big-sale">Sale 70%</div>
+                                                                <div class="geodir-category-opt">
+                                                                    <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
+                                                                    <div class="rate-class-name">
+                                                                        <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@getAllDanhGiaByIdKs(item.Id).Count() Đánh giá </div>
+                                                                        <span>@getDiemTBAllById(item.Id)</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="geodir-category-content fl-wrap title-sin_item">
+                                                                <div class="geodir-category-content-title fl-wrap">
+                                                                    <div class="geodir-category-content-title-item">
+                                                                        <h3 class="title-sin_map">
+                                                                            <a href="/phong/chitietkhachsan?id=@item.Id">
+                                                                                @{
+                                                                                    string tenKhachSan = item.TenKhachSan;
+                                                                                    if (tenKhachSan.Length > 30) // Giới hạn 20 ký tự
+                                                                                    {
+                                                                                        tenKhachSan = tenKhachSan.Substring(0, 30) + "..."; // Cắt chuỗi và thêm dấu ba chấm
+                                                                                    }
+                                                                                    @tenKhachSan
+                                                                                }
+                                                                            </a>
+                                                                        </h3>
+                                                                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> @item.DiaChi</a></div>
+                                                                    </div>
+                                                                </div>
+                                                                <p>
+                                                                    @{
+                                                                        // Giới hạn số ký tự của item.GioiThieu
+                                                                        string gioiThieu = item.GioiThieu;
+                                                                        int gioiHanKyTu = 250; // Số ký tự tối đa mong muốn
+                                                                        if (gioiThieu.Length > gioiHanKyTu)
+                                                                        {
+                                                                            gioiThieu = gioiThieu.Substring(0, gioiHanKyTu) + "...";
+                                                                        }
+                                                                        @gioiThieu
+                                                                    }
+                                                                </p>
+                                                                <ul class="facilities-list fl-wrap">
+                                                                    @foreach (var tn_ks in getAllTienNghiOfKhachSan(@item.Id).Take(4))
+                                                                    {
+                                                                        <li><i class="@tn_ks.IconTienNghi"></i><span>@tn_ks.TenTienNghi</span></li>
+                                                                    }
+                                                                </ul>
+                                                                <div class="geodir-category-footer fl-wrap">
+                                                                    <div class="geodir-opt-link">
+                                                                        <div class="geodir-category-price">1 ĐÊM/ <span>@string.Format("{0:N0} VNĐ", @getGiaTrungBinhKS(item.Id))</span></div>
+                                                                    </div>
+                                                                    <div class="geodir-opt-list">
+                                                                        @*<a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>*@
+                                                                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Lưu</span></a>
+                                                                        @*<a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Tìm chỉ đường</span></a>*@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </article>
+                                                    </div>
+                                                }
+                                            }
+
+                                            <!-- listing-item end -->
+                                        </div>
+                                        <!-- listing-item-container end-->
+                                        <a class="load-more-button" href="#">Tải thêm <i class="fal fa-spinner"></i> </a>
+                                    </div>
+                                    <!-- list-main-wrap end-->
+                                </div>
+                                <!--col-list-wrap end -->
+                            </div>
+                            <!--listing  end-->
+                        </div>
+                        <!--row end-->
+                    </div>
+                    <div class="limit-box fl-wrap"></div>
+                </section>
+            </div>
+            <!-- content end-->
+        </div>
+        <!--wrapper end -->
+        <!--footer -->
+        @await Html.PartialAsync("_PartialFooter")
+        <!--footer end -->
+        <!--map-modal -->
+        <div class="map-modal-wrap">
+            <div class="map-modal-wrap-overlay"></div>
+            <div class="map-modal-item">
+                <div class="map-modal-container fl-wrap">
+                    <div class="map-modal fl-wrap">
+                        <div id="singleMap" data-latitude="40.7" data-longitude="-73.1"></div>
+                    </div>
+                    <h3><i class="fal fa-location-arrow"></i><a href="#">Hotel Title</a></h3>
+                    <input id="pac-input" class="controls fl-wrap controls-mapwn" type="text" placeholder="What Nearby ?   Bar , Gym , Restaurant ">
+                    <div class="map-modal-close"><i class="fal fa-times"></i></div>
+                </div>
+            </div>
+        </div>
+        <!--map-modal end -->
+        <!--register form -->
+        <div class="main-register-wrap modal">
+            <div class="reg-overlay"></div>
+            <div class="main-register-holder">
+                <div class="main-register fl-wrap">
+                    <div class="close-reg color-bg"><i class="fal fa-times"></i></div>
+                    <ul class="tabs-menu">
+                        <li class="current"><a href="#tab-1"><i class="fal fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="#tab-2"><i class="fal fa-user-plus"></i> Register</a></li>
+                    </ul>
+                    <!--tabs -->
+                    <div id="tabs-container">
+                        <div class="tab">
+                            <!--tab -->
+                            <div id="tab-1" class="tab-content">
+                                <h3>Sign In <span>Easy<strong>Book</strong></span></h3>
+                                <div class="custom-form">
+                                    <form method="post" name="registerform">
+                                        <label>Username or Email Address <span>*</span> </label>
+                                        <input name="email" type="text" onClick="this.select()" value="">
+                                        <label>Password <span>*</span> </label>
+                                        <input name="password" type="password" onClick="this.select()" value="">
+                                        <button type="submit" class="log-submit-btn"><span>Log In</span></button>
+                                        <div class="clearfix"></div>
+                                        <div class="filter-tags">
+                                            <input id="check-a" type="checkbox" name="check">
+                                            <label for="check-a">Remember me</label>
+                                        </div>
+                                    </form>
+                                    <div class="lost_password">
+                                        <a href="#">Lost Your Password?</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab end -->
+                            <!--tab -->
+                            <div class="tab">
+                                <div id="tab-2" class="tab-content">
+                                    <h3>Sign Up <span>Easy<strong>Book</strong></span></h3>
+                                    <div class="custom-form">
+                                        <form method="post" name="registerform" class="main-register-form" id="main-register-form2">
+                                            <label>Full Name <span>*</span> </label>
+                                            <input name="name" type="text" onClick="this.select()" value="">
+                                            <label>Email Address <span>*</span></label>
+                                            <input name="email" type="text" onClick="this.select()" value="">
+                                            <label>Password <span>*</span></label>
+                                            <input name="password" type="password" onClick="this.select()" value="">
+                                            <button type="submit" class="log-submit-btn"><span>Register</span></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab end -->
+                        </div>
+                        <!--tabs end -->
+                        <div class="log-separator fl-wrap"><span>or</span></div>
+                        <div class="soc-log fl-wrap">
+                            <p>For faster login or register use your social account.</p>
+                            <a href="#" class="facebook-log"><i class="fab fa-facebook-f"></i>Connect with Facebook</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--register form end -->
+        <a class="to-top"><i class="fas fa-caret-up"></i></a>
+    </div>
+    <!-- Main end -->
+    <!--=============== scripts  ===============-->
+    <script type="text/javascript" src="../LayoutHotel/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/plugins.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/scripts.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwJSRi0zFjDemECmFl9JtRj1FY7TiTRRo&amp;libraries=places&amp;callback=initAutocomplete"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/map-single.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Xử lý sự kiện click trên nút "Tìm kiếm"
+            $("#searchButton").click(function () {
+                // Lấy các giá trị từ các trường lọc
+                var minPrice = $(".range-slider").data("ionRangeSlider").result.from;
+                var maxPrice = $(".range-slider").data("ionRangeSlider").result.to;
+                var city = $(".chosen-select").val();
+                var destination = $("#autocompleteid3").val();
+                var dates = $("input[name='dates']").val();
+                var ratings = $(".filter-tags input[name='check']:checked").map(function () {
+                    return $(this).next().text().trim();
+                }).get();
+                var facilities = $(".half-tags input[name='check']:checked").map(function () {
+                    return $(this).next().text().trim();
+                }).get();
+
+                // Gửi yêu cầu AJAX
+                $.ajax({
+                    url: "/phong/lockhachsan", // Đường dẫn đến Action xử lý lọc khách sạn
+                    type: "POST",
+                    data: {
+                        minPrice: minPrice,
+                        maxPrice: maxPrice,
+                        city: city,
+                        destination: destination,
+                        dates: dates,
+                        ratings: ratings,
+                        facilities: facilities
+                    },
+                    success: function (data) {
+                        $("#hotelList").html(data); // Cập nhật kết quả vào phần tử #hotelList
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+<!-- Mirrored from easybook.kwst.net/listing4.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:18:13 GMT -->
+</html>
