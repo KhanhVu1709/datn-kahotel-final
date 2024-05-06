@@ -1,13 +1,19 @@
-﻿using DATN_KAHotel_Final.Models;
+﻿using DATN_KAHotel_Final.Areas.Admin.Models;
+using DATN_KAHotel_Final.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Drawing.Printing;
 using System.Net.WebSockets;
+using System.Runtime.Intrinsics.Arm;
+using X.PagedList;
 
 namespace DATN_KAHotel_Final.Controllers
 {
     public class AccountDetailController : Controller
     {
         QlksContext db = new QlksContext();
+
+        //
         public IActionResult ThongTinTaiKhoan(int? id)
         {
             TaiKhoan tai_khoan = db.TaiKhoans.FirstOrDefault(t => t.Id == id);
@@ -67,6 +73,100 @@ namespace DATN_KAHotel_Final.Controllers
             db.SaveChanges();
 
             return Redirect("/accountdetail/thongtintaikhoan?id="+id);
+        }
+
+        // thay đổi mật khẩu
+        public IActionResult DoiMatKhau(int? id)
+        {
+            TaiKhoan tai_khoan = db.TaiKhoans.FirstOrDefault(t => t.Id == id);
+            return View(tai_khoan);
+        }
+
+        [HttpPost]
+        public IActionResult DoiMatKhau(int? id, IFormCollection fc)
+        {
+            TaiKhoan tai_khoan = db.TaiKhoans.FirstOrDefault(t => t.Id == id);
+
+            var matKhauCur = fc["matKhauCur"].ToString();
+            var matKhauNew = fc["matKhauNew"].ToString();
+            var matKhauConf = fc["matKhauConf"].ToString();
+
+            var passwordHasher = new PasswordHasher();
+
+            // Kiểm tra mật khẩu nhập vào có khớp với mật khẩu đã mã hoá hay không
+            var passwordVerification = passwordHasher.VerifyHashedPassword(tai_khoan.MatKhau, matKhauCur);
+
+            // Mật khẩu đúng => chuyển hướng đến trang khác
+            if (passwordVerification == Microsoft.AspNet.Identity.PasswordVerificationResult.Success)
+            {
+                if(matKhauNew.Trim() == matKhauCur.Trim())
+                {
+                    TempData["TrungMK"] = "Mật khẩu mới giống mật khẩu cũ";
+                    return Redirect("/accountdetail/doimatkhau?id=" + id);
+                } else
+                {
+                    if (matKhauConf.Trim() != matKhauNew.Trim())
+                    {
+                        TempData["KhongKhopMK"] = "Mật khẩu mới và xác nhận mật khẩu không khớp nhau";
+                        return Redirect("/accountdetail/doimatkhau?id=" + id);
+                    }
+                    else
+                    {
+                        string hashedPassword = passwordHasher.HashPassword(matKhauNew);
+
+                        if (ModelState.IsValid)  // thông tin vượt qua được validation
+                        {
+                            tai_khoan.MatKhau = hashedPassword;
+                            db.TaiKhoans.Update(tai_khoan);
+                            db.SaveChanges();
+
+                            return Redirect("/accountdetail/doimatkhau?id=" + id);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Mật khẩu không khớp hoặc không tìm thấy người dùng
+                TempData["SaiMK"] = "Sai mật khẩu";
+                return Redirect("/accountdetail/doimatkhau?id=" + id);
+            }
+
+            return View();
+        }
+
+        public IActionResult LichSuDatPhong(int? id, int? page)
+        {
+            int pageSize = 10;
+            int pageNumber = page == null || page < 0 ? 1 : page.Value;
+
+            TaiKhoan tai_khoan = db.TaiKhoans.FirstOrDefault(t => t.Id == id);
+
+            var linq = (from t in db.TaiKhoans
+                        join dp in db.DatPhongs on t.Id equals dp.IdTaiKhoan
+                        join tt in db.TrangThaiDons on dp.IdTrangThai equals tt.Id
+                        join p in db.Phongs on dp.IdPhong equals p.Id
+                        join ks in db.KhachSans on p.IdKhachSan equals ks.Id
+                        where t.Id == id
+                        select new ChiTietGiaoDich
+                        {
+                            IdHoaDon = dp.Id,
+                            IdTaiKhoan = t.Id,
+                            HoTen = t.HoTen,
+                            Email = t.Email,
+                            Sdt = t.SoDienThoai,
+                            BatDau = dp.BatDau,
+                            KetThuc = dp.KetThuc,
+                            TrangThai = tt.TenTrangThai,
+                            TongTien = dp.TongTien,
+                            AnhDaiDienPhong = p.AnhDaiDien,
+                            SoNguoi = p.SoNguoi,
+                            IdKhachSan = ks.Id,
+                            TenKhachSan = ks.TenKhachSan,
+                        }).ToList();
+            ViewBag.lichSuDatPhong = linq;
+            //PagedList<ChiTietGiaoDich> list = new PagedList<ChiTietGiaoDich>(linq, pageNumber, pageSize);
+            return View(tai_khoan);
         }
     }
 }

@@ -64,6 +64,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGFpS2hvYW5cUGhhblF1eWVuVGFpS2hvYW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/AccountDetail/DoiMatKhau.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudERldGFpbFxEb2lNYXRLaGF1LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/AccountDetail/LichSuDatPhong.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudERldGFpbFxMaWNoU3VEYXRQaG9uZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/AccountDetail/ThongTinTaiKhoan.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudERldGFpbFxUaG9uZ1RpblRhaUtob2FuLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -102,6 +110,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Shared/_AccountDetail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9BY2NvdW50RGV0YWlsLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Shared/_HotelList.cshtml]

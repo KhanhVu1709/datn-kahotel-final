@@ -204,6 +204,7 @@ namespace DATN_KAHotel_Final.Controllers
                     dat_phong.ThanhToan = vnpay_payment;
                     dat_phong.Status = false;
                     dat_phong.IdTrangThai = id_trang_thai;
+                    dat_phong.NgayDat = DateTime.Now;
 
                     db.DatPhongs.Add(dat_phong);
                 }
@@ -257,6 +258,7 @@ namespace DATN_KAHotel_Final.Controllers
                     dat_phong.ThanhToan = vnpay_payment;
                     dat_phong.Status = false;
                     dat_phong.IdTrangThai = id_trang_thai;
+                    dat_phong.NgayDat = DateTime.Now;
 
                     db.DatPhongs.Add(dat_phong);
                 }

@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "_AccountDetail";
+}
+
+@*@using DATN_KAHotel_Final.Areas.Admin.Models;
+@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<ChiTietGiaoDich>*@
+
+@model TaiKhoan
+
+<div class="container">
+    <!--dasboard-wrap-->
+    <div class="dasboard-wrap fl-wrap">
+        <!-- dashboard-content-->
+        <div class="dashboard-content fl-wrap">
+            @foreach (var item in ViewBag.lichSuDatPhong)
+            {
+                <div class="dashboard-list-box fl-wrap">
+                    <div class="dashboard-header fl-wrap">
+                        <h3>Bookings</h3>
+                    </div>
+                    <!-- dashboard-list end-->
+                    <div class="dashboard-list">
+                        <div class="dashboard-message">
+                            @if(item.TrangThai != "Huỷ bỏ")
+                            {
+                                <a href="#" class="disable"><span class="new-dashboard-item">Huỷ</span></a>
+                            }
+                            <div class="dashboard-message-avatar">
+                                <img src="@Url.Content("~/Images/phong/"+item.AnhDaiDienPhong)" alt="">
+                            </div>
+                            <div class="dashboard-message-text">
+                                <h4>@item.HoTen <span></span></h4>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Tên khách sạn :</span> :
+                                    <span class="booking-text"><a href="/phong/chitietkhachsan?id=@item.IdKhachSan">@item.TenKhachSan</a></span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Số người :</span>
+                                    <span class="booking-text">@item.SoNguoi người</span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Ngày đặt :</span>
+                                    <span class="booking-text">@item.BatDau  - @item.KetThuc</span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Mail :</span>
+                                    <span class="booking-text"><a href="#" target="_top">@item.Email</a></span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Số điện thoại :</span>
+                                    <span class="booking-text"><a href="tel:@item.Sdt" target="_top">@item.Sdt</a></span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Phương thức thanh toán :</span>
+                                    <span class="booking-text"> <strong class="done-paid">Trả  </strong>  sử dụng VnPay</span>
+                                </div>
+                                <span class="fw-separator"></span>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere convallis purus non cursus. Cras metus neque, gravida sodales massa ut. </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- dashboard-list end-->
+                </div>
+            }
+            
+            <!-- pagination-->
+            <div class="pagination">
+                <a href="#" class="prevposts-link"><i class="fa fa-caret-left"></i></a>
+                <a href="#" class="current-page">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#" class="nextposts-link"><i class="fa fa-caret-right"></i></a>
+            </div>
+        </div>
+        <!-- dashboard-list-box end-->
+    </div>
+    <!-- dasboard-wrap end-->
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('a.disabled').click(function (event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định khi click vào liên kết
+        });
+    });
+</script>

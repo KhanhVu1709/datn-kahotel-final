@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "jtKaAa80/Z+1l989l0JAPXkDoURkhxQ1RJUzkfzZj4s=",
+  "Hash": "PRGSs2tuTHDFWWZAk8sKmBibYFUxxuk6l+OKILEvMsw=",
   "Source": "DATN-KAHotel-Final",
   "BasePath": "_content/DATN-KAHotel-Final",
   "Mode": "Default",
@@ -2191,6 +2191,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\taikhoan\\133554209428346718_beautiful-girl.jpg"
+    },
+    {
+      "Identity": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\Images\\taikhoan\\133590520076470420_beautiful-girl.jpg",
+      "SourceId": "DATN-KAHotel-Final",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\",
+      "BasePath": "_content/DATN-KAHotel-Final",
+      "RelativePath": "Images/taikhoan/133590520076470420_beautiful-girl.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\taikhoan\\133590520076470420_beautiful-girl.jpg"
     },
     {
       "Identity": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\Images\\taikhoan\\avatar5.png",

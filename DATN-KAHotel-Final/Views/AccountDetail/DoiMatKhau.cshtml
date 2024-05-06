@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "_AccountDetail";
+}
+
+@model TaiKhoan
+
+<div class="container">
+    <!--dasboard-wrap-->
+    <div class="dasboard-wrap fl-wrap">
+        <!-- dashboard-content-->
+        <div class="dashboard-content fl-wrap">
+            <form method="post" action="/accountdetail/doimatkhau" enctype="multipart/form-data">
+                <input type="hidden" asp-for="@Model.Id" />
+                <div class="box-widget-item-header">
+                    <h3> Thay đổi mật khẩu</h3>
+                </div>
+                <div class="custom-form no-icons">
+                    <div class="pass-input-wrap fl-wrap">
+                        @TempData["SaiMK"]
+                        <label>Mật khẩu hiện tại</label>
+                        <input type="password" class="pass-input" placeholder="" value="" name="matKhauCur"/>
+                        <span class="eye"><i class="far fa-eye" aria-hidden="true"></i> </span>
+                    </div>
+                    <div class="pass-input-wrap fl-wrap">
+                        @TempData["TrungMK"]
+                        <label>Mật khẩu mới</label>
+                        <input type="password" class="pass-input" placeholder="" value="" name="matKhauNew"/>
+                        <span class="eye"><i class="far fa-eye" aria-hidden="true"></i> </span>
+                    </div>
+                    <div class="pass-input-wrap fl-wrap">
+                        @TempData["KhongKhopMK"]
+                        <label>Xác nhận mật khẩu mới</label>
+                        <input type="password" class="pass-input" placeholder="" value="" name="matKhauConf"/>
+                        <span class="eye"><i class="far fa-eye" aria-hidden="true"></i> </span>
+                    </div>
+                    <button class="btn  big-btn  color2-bg flat-btn float-btn">Lưu thay đổi<i class="fal fa-save"></i></button>
+                </div>
+            </form>
+        </div>
+        <!-- dashboard-list-box end-->
+    </div>
+    <!-- dasboard-wrap end-->
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const submitBtn = document.querySelector(".big-btn"); // Chọn nút submit bằng class hoặc ID của nó
+
+        submitBtn.addEventListener("click", function (event) {
+            // Ngăn chặn hành vi mặc định của nút submit
+            event.preventDefault();
+
+            // Lấy giá trị từ các ô input
+            const matKhauCur = document.querySelector("[name='matKhauCur']").value;
+            const matKhauNew = document.querySelector("[name='matKhauNew']").value;
+            const matKhauConf = document.querySelector("[name='matKhauConf']").value;
+
+            // Kiểm tra xem mật khẩu hiện tại có được nhập không
+            if (!matKhauCur) {
+                alert("Vui lòng nhập mật khẩu hiện tại.");
+                return;
+            }
+
+            // Kiểm tra độ dài mật khẩu mới
+            if (matKhauNew.length < 6) {
+                alert("Mật khẩu mới phải chứa ít nhất 6 ký tự.");
+                return;
+            }
+
+            // Kiểm tra xem mật khẩu mới và xác nhận mật khẩu mới có khớp nhau không
+            if (matKhauNew !== matKhauConf) {
+                alert("Xác nhận mật khẩu mới không khớp.");
+                return;
+            }
+
+            // Nếu tất cả điều kiện đều đúng, submit form
+            document.querySelector("form").submit();
+        });
+    });
+</script>

@@ -29,7 +29,7 @@ FROM KhachSan ks
             OR (@EndDate BETWEEN dp.BatDau AND dp.KetThuc)
             OR (dp.BatDau BETWEEN @StartDate AND @EndDate)
             OR (dp.KetThuc BETWEEN @StartDate AND @EndDate)
-        )
+        ) AND dp.IdTrangThai IN (1,2,3)
     )
     GROUP BY
         ks.Id,
@@ -63,7 +63,11 @@ BEGIN
         p.IdLoaiPhong,
         p.IdKhachSan,
         p.AnhDaiDien,
-        p.IsDelete
+        p.IsDelete,
+		p.MoTa,
+		p.SoNguoi,
+		p.KichThuocPhong,
+		p.SoGiuong
     FROM Phong p
     WHERE
     p.IdKhachSan = @IdKhachSan
@@ -75,7 +79,7 @@ BEGIN
             OR (@EndDate BETWEEN dp.BatDau AND dp.KetThuc)
             OR (dp.BatDau BETWEEN @StartDate AND @EndDate)
             OR (dp.KetThuc BETWEEN @StartDate AND @EndDate)
-        )
+        ) AND dp.IdTrangThai IN (1,2,3)
     )
 END;
 
