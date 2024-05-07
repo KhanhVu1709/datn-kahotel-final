@@ -3,7 +3,8 @@
     public class ChiTietGiaoDich
     {
         public int IdKhachSan { get; set; }
-        public string TenKhachSan { get; set; }
+        public string? TenKhachSan { get; set; }
+        public string? TenPhong { get; set; }
         public int IdHoaDon { get; set; }
         public string? HoTen { get; set; }
         public string? Email { get; set; }

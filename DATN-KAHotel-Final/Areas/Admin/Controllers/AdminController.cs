@@ -26,6 +26,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
             // Lặp qua từng đơn đặt phòng để tính tổng doanh thu của mỗi tháng
             foreach (var datPhong in datPhongs)
             {
+                // chỉ tính doanh thu với những đơn có trạng thái là "Hoàn tất"
                 if(datPhong.IdTrangThai == 3)
                 {
                     // Kiểm tra xem ngày đặt có hợp lệ không

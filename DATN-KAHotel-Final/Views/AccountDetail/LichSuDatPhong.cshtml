@@ -17,14 +17,19 @@
             {
                 <div class="dashboard-list-box fl-wrap">
                     <div class="dashboard-header fl-wrap">
-                        <h3>Bookings</h3>
+                        <h3>Lịch sử đặt phòng</h3>
                     </div>
                     <!-- dashboard-list end-->
                     <div class="dashboard-list">
                         <div class="dashboard-message">
-                            @if(item.TrangThai != "Huỷ bỏ")
+                            @{
+                                var now = DateTime.Now;
+                                var batDau = item.BatDau;
+                                var soNgay = (batDau - now).TotalDays;
+                            }
+                            @if(item.TrangThai != "Huỷ bỏ" && soNgay > 3)
                             {
-                                <a href="#" class="disable"><span class="new-dashboard-item">Huỷ</span></a>
+                                <a href="/accountdetail/yeucauhuyphong?id=@item.IdTaiKhoan&idHoaDon=@item.IdHoaDon" id="cancelLink" class="disable"><span class="new-dashboard-item">Huỷ</span></a>
                             }
                             <div class="dashboard-message-avatar">
                                 <img src="@Url.Content("~/Images/phong/"+item.AnhDaiDienPhong)" alt="">
@@ -34,6 +39,10 @@
                                 <div class="booking-details fl-wrap">
                                     <span class="booking-title">Tên khách sạn :</span> :
                                     <span class="booking-text"><a href="/phong/chitietkhachsan?id=@item.IdKhachSan">@item.TenKhachSan</a></span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Tên phòng :</span> :
+                                    <span class="booking-text"><a href="#">@item.TenPhong</a></span>
                                 </div>
                                 <div class="booking-details fl-wrap">
                                     <span class="booking-title">Số người :</span>
@@ -50,6 +59,10 @@
                                 <div class="booking-details fl-wrap">
                                     <span class="booking-title">Số điện thoại :</span>
                                     <span class="booking-text"><a href="tel:@item.Sdt" target="_top">@item.Sdt</a></span>
+                                </div>
+                                <div class="booking-details fl-wrap">
+                                    <span class="booking-title">Tồng tiền đã thanh toán :</span>
+                                    <span class="booking-text"><a href="#" target="_top">@item.TongTien</a></span>
                                 </div>
                                 <div class="booking-details fl-wrap">
                                     <span class="booking-title">Phương thức thanh toán :</span>
@@ -84,6 +97,28 @@
     $(document).ready(function () {
         $('a.disabled').click(function (event) {
             event.preventDefault(); // Ngăn chặn hành động mặc định khi click vào liên kết
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy đối tượng nút Huỷ
+        var cancelButton = document.getElementById("cancelLink");
+
+        // Bắt sự kiện click
+        cancelButton.addEventListener("click", function (event) {
+            // Ngăn chặn hành động mặc định của nút a
+            event.preventDefault();
+
+            // Hiển thị cảnh báo
+            var confirmation = confirm("Bạn có chắc chắn muốn huỷ phòng?");
+
+            // Nếu người dùng chọn "OK" trong cảnh báo
+            if (confirmation) {
+                // Chuyển hướng đến đường dẫn trong href của nút a
+                window.location.href = cancelButton.href;
+            }
         });
     });
 </script>

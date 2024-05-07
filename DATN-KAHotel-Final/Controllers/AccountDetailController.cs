@@ -13,13 +13,14 @@ namespace DATN_KAHotel_Final.Controllers
     {
         QlksContext db = new QlksContext();
 
-        //
+        // thông tin tài khoản
         public IActionResult ThongTinTaiKhoan(int? id)
         {
             TaiKhoan tai_khoan = db.TaiKhoans.FirstOrDefault(t => t.Id == id);
             return View(tai_khoan);
         }
 
+        // cập nhật chỉnh sửa tài khoản
         [HttpPost]
         public IActionResult CapNhatTaiKhoan(int? id, IFormCollection fc)
         {
@@ -135,6 +136,7 @@ namespace DATN_KAHotel_Final.Controllers
             return View();
         }
 
+        // Lịch sử đặt phòng của khách hàng
         public IActionResult LichSuDatPhong(int? id, int? page)
         {
             int pageSize = 10;
@@ -148,6 +150,7 @@ namespace DATN_KAHotel_Final.Controllers
                         join p in db.Phongs on dp.IdPhong equals p.Id
                         join ks in db.KhachSans on p.IdKhachSan equals ks.Id
                         where t.Id == id
+                        orderby dp.Id descending
                         select new ChiTietGiaoDich
                         {
                             IdHoaDon = dp.Id,
@@ -163,10 +166,20 @@ namespace DATN_KAHotel_Final.Controllers
                             SoNguoi = p.SoNguoi,
                             IdKhachSan = ks.Id,
                             TenKhachSan = ks.TenKhachSan,
+                            TenPhong = p.TenPhong,
                         }).ToList();
             ViewBag.lichSuDatPhong = linq;
             //PagedList<ChiTietGiaoDich> list = new PagedList<ChiTietGiaoDich>(linq, pageNumber, pageSize);
             return View(tai_khoan);
+        }
+
+        public IActionResult YeuCauHuyPhong(int? id, int? idHoaDon)
+        {
+            DatPhong dat_phong = db.DatPhongs.FirstOrDefault(d => d.Id == idHoaDon);
+            dat_phong.IdTrangThai = 4;
+            db.DatPhongs.Update(dat_phong);
+            db.SaveChanges();
+            return Redirect("/accountdetail/lichsudatphong?id=" + id);
         }
     }
 }

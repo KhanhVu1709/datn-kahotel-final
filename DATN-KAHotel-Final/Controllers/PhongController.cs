@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNet.Identity;
 using DATN_KAHotel_Final.Service;
 using System.Linq;
+using Microsoft.AspNetCore.SignalR.Protocol;
 
 namespace DATN_KAHotel_Final.Controllers
 {
@@ -69,7 +70,7 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         [HttpPost]
-        public IActionResult LocKhachSan(int minPrice, int maxPrice, int city)
+        public IActionResult LocKhachSan(int minPrice, int maxPrice, int city, List<string> ratings, List<string> facilities)
         {
             // lấy ra khách sạn có giá lớn hơn bằng minPrice và nhỏ hơn bằng maxPrice
             var result = from k in db.KhachSans
@@ -89,7 +90,7 @@ namespace DATN_KAHotel_Final.Controllers
             var idList = result.Select(r => r.KhachSanId).ToList();
 
             // Truy vấn để lấy thông tin chi tiết về các khách sạn có ID nằm trong danh sách idList
-            var ks_result = db.KhachSans.Where(k => idList.Contains(k.Id));
+            var ks_result = db.KhachSans.Where(k => idList.Contains(k.Id)).ToList();
             return PartialView("_HotelList", ks_result);
         }
 
