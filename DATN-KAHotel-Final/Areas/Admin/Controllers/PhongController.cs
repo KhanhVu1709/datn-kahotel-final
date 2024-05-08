@@ -1,4 +1,5 @@
 ﻿using DATN_KAHotel_Final.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using X.PagedList;
@@ -7,6 +8,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 {
     [Area("admin")]
+    //[Authorize(Roles = "Quản lý phòng")]
     public class PhongController : Controller
     {
         QlksContext db = new QlksContext();

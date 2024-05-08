@@ -3,11 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using DATN_KAHotel_Final.Models;
 using Microsoft.AspNet.Identity;
 using X.PagedList;
+using System.Data;
 
 namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 {
     [Area("admin")]
-    //[Authorize(Roles = "quản lý khách hàng")]
+    //[Authorize(Roles = "Quản lý khách hàng")]
     public class TaiKhoanController : Controller
     {
         QlksContext db = new QlksContext();

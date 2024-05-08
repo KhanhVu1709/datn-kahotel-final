@@ -85,19 +85,24 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 
                             // lưu session id và tên tài khoản
                             HttpContext.Session.SetString("login", "true");
-                            HttpContext.Session.SetInt32("id", id_user);
+                            //HttpContext.Session.SetInt32("id", id_user);
+                            HttpContext.Session.SetInt32("idUser", id_user);
                             HttpContext.Session.SetString("taikhoan", user.TaiKhoan);
-                            if (user.Loai == "quản lý khách hàng")
+                            if (user.Loai == "Quản lý khách hàng")
                             {
-                                return RedirectToAction("DanhMucTaiKhoan", "User");
+                                return Redirect("/admin/taikhoan/danhmuctaikhoan");
                             }
-                            if (user.Loai == "quản lý sản phẩm")
+                            if (user.Loai == "Quản lý phòng")
                             {
-                                return RedirectToAction("DanhMucSanPham", "Product");
+                                return Redirect("/admin/phong/danhmucphong");
                             }
-                            if (user.Loai == "quản lý hoá đơn")
+                            if (user.Loai == "Quản lý đơn đặt")
                             {
-                                return RedirectToAction("DanhMucGiaoDich", "Order");
+                                return Redirect("/admin/order/danhmucgiaodich");
+                            }
+                            if (user.Loai == "Quản lý khách sạn")
+                            {
+                                return Redirect("/admin/khachsan/danhmuckhachsan");
                             }
 
                             return Redirect("/admin/");

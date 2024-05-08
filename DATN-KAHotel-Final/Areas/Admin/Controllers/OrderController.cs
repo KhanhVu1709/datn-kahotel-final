@@ -8,6 +8,7 @@ using X.PagedList;
 namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 {
     [Area("admin")]
+    //[Authorize]
     public class OrderController : Controller
     {
         QlksContext db = new QlksContext();

@@ -1,12 +1,15 @@
 ﻿using DATN_KAHotel_Final.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 using X.PagedList;
 
 namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 {
     [Area("admin")]
+    //[Authorize(Roles = "Quản lý khách sạn")]
     public class KhachSanController : Controller
     {
         QlksContext db = new QlksContext();

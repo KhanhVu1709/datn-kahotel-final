@@ -1,4 +1,5 @@
-﻿using DATN_KAHotel_Final.Service;
+﻿using DATN_KAHotel_Final.Areas.Admin.Models;
+using DATN_KAHotel_Final.Service;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 // Add services Session
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(option =>
 {
     option.IdleTimeout = TimeSpan.FromMinutes(120);     // thời gian hết phiên
@@ -46,13 +48,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseSession();
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
 app.UseAuthorization();
 app.UseAuthentication();
+
+app.UseMiddleware<AdminAccessMiddleware>();
 
 app.MapControllerRoute(
             name: "area",

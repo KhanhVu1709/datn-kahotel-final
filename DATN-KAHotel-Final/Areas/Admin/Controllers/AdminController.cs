@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 {
     [Area("admin")]
-    //[Authorize(Roles = "quản lý khách hàng, quản lý hoá đơn, quản lý sản phẩm", Policy = "AnyRole")]
+    //[Authorize(Roles = "Quản lý khách hàng, Quản lý đơn đặt, Quản lý phòng, Quản lý khách sạn", Policy = "AnyRole")]
     public class AdminController : Controller
     {
         QlksContext db = new QlksContext();

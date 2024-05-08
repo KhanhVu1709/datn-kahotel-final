@@ -94,6 +94,7 @@ namespace DATN_KAHotel_Final.Controllers
             return PartialView("_HotelList", ks_result);
         }
 
+        [Authorize]
         public IActionResult ChiTietKhachSan(int id)
         {
             KhachSan khach_sans = db.KhachSans.FirstOrDefault(x => x.Id == id);
@@ -122,6 +123,7 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         // xem chi tiet phong 
+        [Authorize]
         public IActionResult ChiTietPhong(int id) 
         {
             var phong = db.Phongs.FirstOrDefault(p => p.Id == id);
@@ -130,6 +132,7 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         #region Thanhtoan
+        [Authorize]
         public IActionResult Checkout(int id, DateTime ngayDen, DateTime ngayDi)
         {
             Cart.AddItem(HttpContext.Session, id, ngayDen, ngayDi);
@@ -218,6 +221,7 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         //
+        [Authorize]
         public IActionResult PaymentCallBack()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
@@ -271,11 +275,13 @@ namespace DATN_KAHotel_Final.Controllers
             return View();
         }
 
+        [Authorize]
         public IActionResult PaymentFail()
         {
             return View();
         }
 
+        [Authorize]
         public IActionResult PaymentSuccess()
         {
             // Lấy giá trị id_datphong từ TempData
