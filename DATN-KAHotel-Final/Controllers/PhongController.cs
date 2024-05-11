@@ -69,32 +69,103 @@ namespace DATN_KAHotel_Final.Controllers
             return View(result);
         }
 
+        // lọc khách sạn theo thanh filter
         [HttpPost]
-        public IActionResult LocKhachSan(int minPrice, int maxPrice, int city, List<string> ratings, List<string> facilities)
+        public IActionResult LocKhachSan(int minPrice, int maxPrice, int city, string[] ratings, string? start, string? end)
         {
-            // lấy ra khách sạn có giá lớn hơn bằng minPrice và nhỏ hơn bằng maxPrice
-            var result = from k in db.KhachSans
-                         join p in db.Phongs on k.Id equals p.IdKhachSan
-                         where k.IdTinhThanh == city
-                         group p.GiaPhong by new { k.Id, k.IdTinhThanh } into g
-                         where g.Average() >= minPrice && g.Average() <= maxPrice
-                         select new
-                         {
-                             KhachSanId = g.Key.Id,
-                             TinhThanhId = g.Key.IdTinhThanh,
-                             AvgGiaPhong = g.Average()
-                         };
+            if(start != null && end != null)
+            {
+                HttpContext.Session.SetString("bat_dau", start);
+                HttpContext.Session.SetString("ket_thuc", end);
+            }
+            if(city != null)
+            {
+                HttpContext.Session.SetInt32("idTinh", city);
+            } 
+            DateTime? bat_dau = Convert.ToDateTime(HttpContext.Session.GetString("bat_dau"));
+            DateTime? ket_thuc = Convert.ToDateTime(HttpContext.Session.GetString("ket_thuc"));
 
+            IEnumerable<KhachSan> result;
 
-            // Lấy danh sách các ID khách sạn từ kết quả truy vấn trước đó
-            var idList = result.Select(r => r.KhachSanId).ToList();
+            if (bat_dau != null && ket_thuc != null)
+            {
+                string sql = "EXEC sp_LayKhachSanCoPhongTrong @IdTinhThanh, @StartDate, @EndDate";
+                var parameters = new[]
+                {
+                    new SqlParameter("@IdTinhThanh", city),
+                    new SqlParameter("@StartDate", bat_dau),
+                    new SqlParameter("@EndDate", ket_thuc)
+                };
+                result = db.KhachSans.FromSqlRaw(sql, parameters).ToList();
+            }
+            else
+            {
+                result = db.KhachSans.Where(x => x.IdTinhThanh == city).ToList();
+            }
 
-            // Truy vấn để lấy thông tin chi tiết về các khách sạn có ID nằm trong danh sách idList
-            var ks_result = db.KhachSans.Where(k => idList.Contains(k.Id)).ToList();
-            return PartialView("_HotelList", ks_result);
+            foreach(var item in result)
+            {
+                var phong = db.Phongs.Where(x => x.IdKhachSan == item.Id).ToList();
+                item.Phongs = phong;
+            }
+
+            // Tính giá trung bình của các phòng cho mỗi khách sạn
+            var avgPrices = result.Select(khachSan => new
+            {
+                KhachSan = khachSan,
+                AvgGiaPhong = khachSan.Phongs.Average(phong => phong.GiaPhong)
+            }).ToList();
+
+            // Lọc danh sách khách sạn dựa trên giá trung bình đã tính
+            var filteredResult = avgPrices.Where(x => x.AvgGiaPhong >= minPrice && x.AvgGiaPhong <= maxPrice)
+                                          .Select(x => x.KhachSan)
+                                          .ToList();
+
+            if (ratings != null && ratings.Length > 0)
+            {
+                filteredResult = filteredResult.Where(khachSan => ratings.Contains(khachSan.SoSao.ToString())).ToList();
+            }
+
+            return PartialView("_HotelList", filteredResult);
         }
 
-        [Authorize]
+        //
+        //[HttpGet]
+        //public IActionResult LoadMoreData(int currentPage, int pageSize)
+        //{
+        //    // lấy thông tin đã nhập để tìm kiếm
+        //    DateTime? bat_dau = Convert.ToDateTime(HttpContext.Session.GetString("bat_dau"));
+        //    string? batDau = HttpContext.Session.GetString("bat_dau");
+
+        //    DateTime? ket_thuc = Convert.ToDateTime(HttpContext.Session.GetString("ket_thuc"));
+        //    string? ketThuc = HttpContext.Session.GetString("ket_thuc");
+        //    int? idTinh = HttpContext.Session.GetInt32("idTinh");
+
+        //    string? tenTinh = db.TinhThanhs.Where(t => t.Id == idTinh).Select(a => a.TenTinh).FirstOrDefault();
+        //    ViewBag.TenTinh = tenTinh;
+        //    // lưu checkout checkin vào session
+
+        //    IEnumerable<KhachSan> result;
+
+        //    if (bat_dau != null && ket_thuc != null)
+        //    {
+        //        string sql = "EXEC sp_LayKhachSanCoPhongTrong @IdTinhThanh, @StartDate, @EndDate";
+        //        var parameters = new[]
+        //        {
+        //            new SqlParameter("@IdTinhThanh", idTinh),
+        //            new SqlParameter("@StartDate", bat_dau),
+        //            new SqlParameter("@EndDate", ket_thuc)
+        //        };
+        //        result = db.KhachSans.FromSqlRaw(sql, parameters).ToList();
+        //    }
+        //    else
+        //    {
+        //        result = db.KhachSans.Where(x => x.IdTinhThanh == idTinh).ToList();
+        //    }
+
+        //    return PartialView("_HotelList", result);
+        //}
+
         public IActionResult ChiTietKhachSan(int id)
         {
             KhachSan khach_sans = db.KhachSans.FirstOrDefault(x => x.Id == id);
@@ -123,7 +194,6 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         // xem chi tiet phong 
-        [Authorize]
         public IActionResult ChiTietPhong(int id) 
         {
             var phong = db.Phongs.FirstOrDefault(p => p.Id == id);
@@ -132,7 +202,6 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         #region Thanhtoan
-        [Authorize]
         public IActionResult Checkout(int id, DateTime ngayDen, DateTime ngayDi)
         {
             Cart.AddItem(HttpContext.Session, id, ngayDen, ngayDi);
@@ -221,7 +290,6 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         //
-        [Authorize]
         public IActionResult PaymentCallBack()
         {
             var response = _vnPayService.PaymentExecute(Request.Query);
@@ -275,13 +343,11 @@ namespace DATN_KAHotel_Final.Controllers
             return View();
         }
 
-        [Authorize]
         public IActionResult PaymentFail()
         {
             return View();
         }
 
-        [Authorize]
         public IActionResult PaymentSuccess()
         {
             // Lấy giá trị id_datphong từ TempData

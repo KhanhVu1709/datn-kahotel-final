@@ -1,4 +1,5 @@
-﻿@{
+﻿@model TaiKhoan
+@{
     Layout = "_AccountDetail";
 }
 
@@ -6,7 +7,8 @@
 @using X.PagedList.Mvc.Core
 @model X.PagedList.IPagedList<ChiTietGiaoDich>*@
 
-@model TaiKhoan
+@using X.PagedList.Mvc.Core
+
 
 <div class="container">
     <!--dasboard-wrap-->
@@ -32,7 +34,7 @@
                                 <a href="/accountdetail/yeucauhuyphong?id=@item.IdTaiKhoan&idHoaDon=@item.IdHoaDon" id="cancelLink" class="disable"><span class="new-dashboard-item">Huỷ</span></a>
                             }
                             <div class="dashboard-message-avatar">
-                                <img src="@Url.Content("~/Images/phong/"+item.AnhDaiDienPhong)" alt="">
+                                <img style="transform: scale(2);" src="@Url.Content("~/Images/phong/"+item.AnhDaiDienPhong)" alt="">
                             </div>
                             <div class="dashboard-message-text">
                                 <h4>@item.HoTen <span></span></h4>
@@ -69,7 +71,7 @@
                                     <span class="booking-text"> <strong class="done-paid">Trả  </strong>  sử dụng VnPay</span>
                                 </div>
                                 <span class="fw-separator"></span>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere convallis purus non cursus. Cras metus neque, gravida sodales massa ut. </p>
+                                @*<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere convallis purus non cursus. Cras metus neque, gravida sodales massa ut. </p>*@
                             </div>
                         </div>
                     </div>
@@ -77,15 +79,17 @@
                 </div>
             }
             
+            @*@Html.PagedListPager(ViewBag.PagedList, page => Url.Action("LichSuDatPhong", new { id = Model.Id, page }))*@
+
             <!-- pagination-->
-            <div class="pagination">
+            @*<div class="pagination">
                 <a href="#" class="prevposts-link"><i class="fa fa-caret-left"></i></a>
                 <a href="#" class="current-page">1</a>
                 <a href="#">2</a>
                 <a href="#">3</a>
                 <a href="#">4</a>
                 <a href="#" class="nextposts-link"><i class="fa fa-caret-right"></i></a>
-            </div>
+            </div>*@
         </div>
         <!-- dashboard-list-box end-->
     </div>
@@ -122,3 +126,4 @@
         });
     });
 </script>
+

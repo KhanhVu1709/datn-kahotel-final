@@ -128,6 +128,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QYXJ0aWFsSGVhZGVyLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Shared/_PartialKhachSan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9QYXJ0aWFsS2hhY2hTYW4uY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Shared/_TrangChu.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9UcmFuZ0NodS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

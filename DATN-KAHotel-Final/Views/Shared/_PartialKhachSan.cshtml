@@ -1,0 +1,65 @@
+﻿@model List<KhachSan>
+@if (Model.Count() == 0)
+{
+    <h1 class="bg-danger text-white">Không có khách sạn nào còn phòng vào ngày đã chọn</h1>
+}
+else
+{
+    @foreach (var item in Model)
+    {
+
+        var averageGiaPhong = item.Phongs.Average(x => x.GiaPhong);
+        var roundedAverage = 0;
+        if (averageGiaPhong != null)
+        {
+            roundedAverage = (int)Math.Round(averageGiaPhong.Value);
+        }
+
+        <div class="listing-item">
+            <article class="geodir-category-listing fl-wrap">
+                <div class="geodir-category-img">
+                    <a href="/Phong/PhongTheoKhachSan?idkhachsan=@item.Id"><img src="../assets/images/hotels/@item.AnhDaiDien" alt=""></a>
+                    <div class="geodir-category-opt">
+                        <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
+                        <div class="rate-class-name">
+                            <div class="score"><strong> Good</strong>8 Reviews </div>
+                            <span>4.1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="geodir-category-content fl-wrap title-sin_item">
+                    <div class="geodir-category-content-title fl-wrap">
+                        <div class="geodir-category-content-title-item">
+                            <h3 class="title-sin_map"><a href="/Phong/PhongTheoKhachSan?idkhachsan=@item.Id">@item.TenKhachSan</a></h3>
+                            <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> @item.DiaChi</a></div>
+                        </div>
+                    </div>
+                    <p> Class aptent taciti  Mauris ac maximus neque. Nam in mauris quis libero sodales eleifend.</p>
+                    <ul class="facilities-list fl-wrap">
+                        <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
+                        <li><i class="fal fa-parking"></i><span>Bãi đỗ xe</span></li>
+                        <li><i class="fal fa-smoking-ban"></i><span>Không hút thuốc</span></li>
+                        <li><i class="fal fa-utensils"></i><span>Nhà hàng</span></li>
+                    </ul>
+                    <div class="geodir-category-footer fl-wrap">
+                        <div class="geodir-opt-link">
+                            <div class="geodir-category-price">Trung bình/đêm <span>@roundedAverage.ToString("N0") VNĐ</span></div>
+                        </div>
+                        <div class="geodir-opt-list">
+                            <a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
+                            <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
+                            <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    }
+}
+<script>
+    var cr2 = $(".card-popup-rainingvis");
+    cr2.each(function (cr) {
+        var starcount2 = $(this).attr("data-starrating2");
+        $("<i class='fa fa-star'></i>").duplicate(starcount2).prependTo(this);
+    });
+</script>

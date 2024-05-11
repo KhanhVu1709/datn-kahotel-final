@@ -3,298 +3,205 @@
     Layout = "_TrangChu";
 }
 
-<div class="slick-slide-item">
-    <!-- listing-item  -->
-    <div class="listing-item">
-        <article class="geodir-category-listing fl-wrap">
-            <div class="geodir-category-img">
-                <a href="listing-single.html"><img src="../LayoutHotel/images/gal/8.jpg" alt=""></a>
-                <div class="listing-avatar">
-                    <a href="author-single.html"><img src="../LayoutHotel/images/avatar/1.jpg" alt=""></a>
-                    <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
-                </div>
-                <div class="sale-window">Sale 20%</div>
-                <div class="geodir-category-opt">
-                    <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
-                    <div class="rate-class-name">
-                        <div class="score"><strong>Very Good</strong>27 Reviews </div>
-                        <span>5.0</span>
+@model List<KhachSan>
+
+@functions {
+    // khoi tao doi tuong
+    QlksContext db = new QlksContext();
+
+    // giá trung bình các phòng của khách sạn
+    public double? getGiaTrungBinhKS(int idKs)
+    {
+        List<Phong> phongs = db.Phongs.Where(p => p.IdKhachSan == idKs).ToList();
+
+        double? giaTB = 0;
+
+        foreach (var item in phongs)
+        {
+            giaTB += item.GiaPhong;
+        }
+
+        return giaTB / phongs.Count();
+    }
+
+    // lấy danh sách đánh giá của khách sạn
+    public List<DanhGium> getAllDanhGiaByIdKs(int idKs)
+    {
+        var list = db.DanhGia.Where(d => d.IdKhachSan == idKs).OrderByDescending(t => t.Id).ToList();
+        return list;
+    }
+
+    // get all các tỉnh
+    //public List<TinhThanh> getAllTinhThanh()
+    //{
+    //    List<TinhThanh> listTinhs = db.TinhThanhs.ToList();
+
+    //    return listTinhs;
+    //}
+
+    // get tên tỉnh
+    //public string getTenTinhById(int? idTinh)
+    //{
+    //    var tinh = db.TinhThanhs.FirstOrDefault(t => t.Id == idTinh);
+    //    return tinh.TenTinh;
+    //}
+
+    public double getDiemTBAllById(int? idKs)
+    {
+        var list = db.DanhGia.Where(d => d.IdKhachSan == idKs).ToList();
+        double diemTB = 0;
+        foreach (var item in list)
+        {
+            diemTB += (double)(item.DiemThoaiMai + item.DiemNhanVien + item.DiemSachSe + item.DiemCoSo) / 4;
+        }
+        if (list.Count != 0)
+        {
+            diemTB = diemTB / list.Count;
+        }
+        return Math.Round(diemTB, 1);
+    }
+
+    // đánh giá bằng chữ
+    public string getDanhGiaBangChu(double diem)
+    {
+        var result = "";
+        if (diem >= 0 && diem <= 3)
+        {
+            result = "Rất tệ";
+        }
+        else if (diem > 3 && diem <= 3.5)
+        {
+            result = "Tệ";
+        }
+        else if (diem > 3.5 && diem <= 4)
+        {
+            result = "Bình thường";
+        }
+        else if (diem > 4 && diem <= 4.5)
+        {
+            result = "Tốt";
+        }
+        else
+        {
+            result = "Rất tốt";
+        }
+        return result;
+    }
+
+    // lấy toàn bộ tỉnh thành
+    public List<TinhThanh> getAllTinhThanh()
+    {
+        var list = db.TinhThanhs.ToList();
+        return list;
+    }
+
+    // isSelected
+    public bool IsSelected(int id)
+    {
+        var idTinh = Context.Session.GetInt32("idTinh");
+        return id == idTinh;
+    }
+
+    // lấy tất cả tiện nghi của khách sạn
+    public List<TienNghi> getAllTienNghiOfKhachSan(int? idKs)
+    {
+        // Kiểm tra idP có giá trị không
+        if (idKs == null) return new List<TienNghi>();  // Trả về danh sách rỗng nếu idP là null
+
+        var result = db.KhachSanTienNghis
+               .Where(ktn => ktn.IdKhachSan == idKs) // Sử dụng tham số idP
+               .Join(db.TienNghis,
+                     ktn => ktn.IdTienNghi,
+                     tn => tn.Id,
+                     (ktn, tn) => tn)  // Trả về các đối tượng TienNghi
+               .ToList();  // Chuyển kết quả thành List
+
+        return result;
+    }
+}
+
+@foreach(var item in Model.Take(5))
+{
+    <div class="slick-slide-item">
+        <!-- listing-item  -->
+        <div class="listing-item">
+            <article class="geodir-category-listing fl-wrap">
+                <div class="geodir-category-img">
+                    <a href="/phong/chitietkhachsan?id=@item.Id"><img style="max-height: 201px; object-fit: cover;" src="@Url.Content("~/Images/khachsan/"+item.AnhDaiDien)" alt=""></a>
+                    <div class="listing-avatar">
+                        <a href="#"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
+                        <span class="avatar-tooltip">Được thêm bởi  <strong>Admin</strong></span>
+                    </div>
+                    <div class="sale-window">Sale 20%</div>
+                    <div class="geodir-category-opt">
+                        <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
+                        <div class="rate-class-name">
+                            <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@(getAllDanhGiaByIdKs(item.Id).Count() != null ? getAllDanhGiaByIdKs(item.Id).Count() : 0) Đánh giá </div>
+                            <span>@(getDiemTBAllById(item.Id) != null ? getDiemTBAllById(item.Id) : 5.0)</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="geodir-category-content fl-wrap title-sin_item">
-                <div class="geodir-category-content-title fl-wrap">
-                    <div class="geodir-category-content-title-item">
-                        <h3 class="title-sin_map"><a href="listing-single.html">Premium Plaza Hotel</a></h3>
-                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> 27th Brooklyn New York, USA</a></div>
+                <div class="geodir-category-content fl-wrap title-sin_item">
+                    <div class="geodir-category-content-title fl-wrap">
+                        <div class="geodir-category-content-title-item">
+                            <h3 class="title-sin_map">
+                                <a href="/phong/chitietkhachsan?id=@item.Id">
+                                    @{
+                                        string tenKhachSan = item.TenKhachSan;
+                                        if (tenKhachSan.Length > 30) // Giới hạn 20 ký tự
+                                        {
+                                            tenKhachSan = tenKhachSan.Substring(0, 30) + "..."; // Cắt chuỗi và thêm dấu ba chấm
+                                        }
+                                        @tenKhachSan
+                                    }
+                                </a>
+                            </h3>
+                            <div class="geodir-category-location fl-wrap">
+                                <a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> 
+                                    @{
+                                        string dia_chi = item.DiaChi;
+                                        int gioiHanKyTu = 30;
+                                        if (dia_chi.Length > gioiHanKyTu)
+                                        {
+                                            dia_chi = dia_chi.Substring(0, gioiHanKyTu) + "...";
+                                        }
+                                        @dia_chi
+                                    }
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @*<p>
+                        @{
+                            // Giới hạn số ký tự của item.GioiThieu
+                            string gioiThieu = item.GioiThieu;
+                            int gioiHanKyTu = 250; // Số ký tự tối đa mong muốn
+                            if (gioiThieu.Length > gioiHanKyTu)
+                            {
+                                gioiThieu = gioiThieu.Substring(0, gioiHanKyTu) + "...";
+                            }
+                            @gioiThieu
+                        }
+                    </p>*@
+                    <ul class="facilities-list fl-wrap">
+                        @foreach (var tn_ks in getAllTienNghiOfKhachSan(@item.Id).Take(4))
+                        {
+                            <li><i class="@tn_ks.IconTienNghi"></i><span>@tn_ks.TenTienNghi</span></li>
+                        }
+                    </ul>
+                    <div class="geodir-category-footer fl-wrap">
+                        <div class="geodir-opt-link">
+                            <div class="geodir-category-price">1 ĐÊM/ <span>@string.Format("{0:N0} VNĐ", @getGiaTrungBinhKS(item.Id))</span></div>
+                        </div>
+                        <div class="geodir-opt-list">
+                            @*<a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>*@
+                            <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Lưu</span></a>
+                            @*<a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Tìm chỉ đường</span></a>*@
+                        </div>
                     </div>
                 </div>
-                <p>Sed interdum metus at nisi tempor laoreet. Integer gravida orci a justo sodales.</p>
-                <ul class="facilities-list fl-wrap">
-                    <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
-                    <li><i class="fal fa-parking"></i><span>Parking</span></li>
-                    <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
-                    <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
-                </ul>
-                <div class="geodir-category-footer fl-wrap">
-                    <div class="geodir-category-price">Awg/Night <span>$ 320</span></div>
-                    <div class="geodir-opt-list">
-                        <a href="#" class="single-map-item" data-newlatitude="40.72956781" data-newlongitude="-73.99726866"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
-                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
-                        <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
-                    </div>
-                </div>
-            </div>
-        </article>
+            </article>
+        </div>
+        <!-- listing-item end -->
     </div>
-    <!-- listing-item end -->
-</div>
-<!--slick-slide-item end-->
-<!--slick-slide-item-->
-<div class="slick-slide-item">
-    <!-- listing-item  -->
-    <div class="listing-item">
-        <article class="geodir-category-listing fl-wrap">
-            <div class="geodir-category-img">
-                <a href="listing-single.html"><img src="../LayoutHotel/images/gal/4.jpg" alt=""></a>
-                <div class="listing-avatar">
-                    <a href="author-single.html"><img src="../LayoutHotel/images/avatar/2.jpg" alt=""></a>
-                    <span class="avatar-tooltip">Added By  <strong>Julie Cramp</strong></span>
-                </div>
-                <div class="sale-window big-sale">Sale 50%</div>
-                <div class="geodir-category-opt">
-                    <div class="listing-rating card-popup-rainingvis" data-starrating2="4"></div>
-                    <div class="rate-class-name">
-                        <div class="score"><strong>Good</strong>12 Reviews </div>
-                        <span>4.2</span>
-                    </div>
-                </div>
-            </div>
-            <div class="geodir-category-content fl-wrap title-sin_item">
-                <div class="geodir-category-content-title fl-wrap">
-                    <div class="geodir-category-content-title-item">
-                        <h3 class="title-sin_map"><a href="listing-single.html">Grand Hero Palace</a></h3>
-                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> W 85th St, New York,  USA</a></div>
-                    </div>
-                </div>
-                <p> Morbi suscipit erat in diam bibendum rutrum in nisl. Aliquam et purus ante.</p>
-                <ul class="facilities-list fl-wrap">
-                    <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
-                    <li><i class="fal fa-parking"></i><span>Parking</span></li>
-                    <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
-                    <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
-                </ul>
-                <div class="geodir-category-footer fl-wrap">
-                    <div class="geodir-opt-link">
-                        <div class="geodir-category-price">Awg/Night <span>$ 120</span></div>
-                    </div>
-                    <div class="geodir-opt-list">
-                        <a href="#" class="single-map-item" data-newlatitude="40.76221766" data-newlongitude="-73.96511769"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
-                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
-                        <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-    <!-- listing-item end -->
-</div>
-<!--slick-slide-item end-->
-<!--slick-slide-item-->
-<div class="slick-slide-item">
-    <!-- listing-item  -->
-    <div class="listing-item">
-        <article class="geodir-category-listing fl-wrap">
-            <div class="geodir-category-img">
-                <a href="listing-single.html"><img src="../LayoutHotel/images/gal/6.jpg" alt=""></a>
-                <div class="listing-avatar">
-                    <a href="author-single.html"><img src="../LayoutHotel/images/avatar/3.jpg" alt=""></a>
-                    <span class="avatar-tooltip">Added By  <strong>Andy Moore</strong></span>
-                </div>
-                <div class="geodir-category-opt">
-                    <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
-                    <div class="rate-class-name">
-                        <div class="score"><strong>Good</strong>6 Reviews </div>
-                        <span>4.7</span>
-                    </div>
-                </div>
-            </div>
-            <div class="geodir-category-content fl-wrap title-sin_item">
-                <div class="geodir-category-content-title fl-wrap">
-                    <div class="geodir-category-content-title-item">
-                        <h3 class="title-sin_map"><a href="listing-single.html">Park Central</a></h3>
-                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i>40 Journal Square Plaza, NJ,  USA</a></div>
-                    </div>
-                </div>
-                <p> Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa.</p>
-                <ul class="facilities-list fl-wrap">
-                    <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
-                    <li><i class="fal fa-parking"></i><span>Parking</span></li>
-                    <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
-                    <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
-                </ul>
-                <div class="geodir-category-footer fl-wrap">
-                    <div class="geodir-opt-link">
-                        <div class="geodir-category-price">Awg/Night <span>$ 80</span></div>
-                    </div>
-                    <div class="geodir-opt-list">
-                        <a href="#" class="single-map-item" data-newlatitude="40.88496706" data-newlongitude="-73.88191222"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
-                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
-                        <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-    <!-- listing-item end -->
-</div>
-<!--slick-slide-item end-->
-<!--slick-slide-item-->
-<div class="slick-slide-item">
-    <!-- listing-item  -->
-    <div class="listing-item">
-        <article class="geodir-category-listing fl-wrap">
-            <div class="geodir-category-img">
-                <a href="listing-single.html"><img src="../LayoutHotel/images/gal/2.jpg" alt=""></a>
-                <div class="listing-avatar">
-                    <a href="author-single.html"><img src="../LayoutHotel/images/avatar/4.jpg" alt=""></a>
-                    <span class="avatar-tooltip">Added By  <strong>Mary Jones</strong></span>
-                </div>
-                <div class="sale-window">Sale 20%</div>
-                <div class="geodir-category-opt">
-                    <div class="listing-rating card-popup-rainingvis" data-starrating2="3"></div>
-                    <div class="rate-class-name">
-                        <div class="score"><strong>Pleasant</strong>10 Reviews </div>
-                        <span>3.2</span>
-                    </div>
-                </div>
-            </div>
-            <div class="geodir-category-content fl-wrap title-sin_item">
-                <div class="geodir-category-content-title fl-wrap">
-                    <div class="geodir-category-content-title-item">
-                        <h3 class="title-sin_map"><a href="listing-single.html">Holiday Home</a></h3>
-                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> 75 Prince St,  NY, USA</a></div>
-                    </div>
-                </div>
-                <p>  Mauris ac maximus neque. Nam in mauris quis libero sodales eleifend.</p>
-                <ul class="facilities-list fl-wrap">
-                    <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
-                    <li><i class="fal fa-parking"></i><span>Parking</span></li>
-                    <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
-                    <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
-                </ul>
-                <div class="geodir-category-footer fl-wrap">
-                    <div class="geodir-opt-link">
-                        <div class="geodir-category-price">Awg/Night <span>$ 50</span></div>
-                    </div>
-                    <div class="geodir-opt-list">
-                        <a href="#" class="single-map-item" data-newlatitude="40.72228267" data-newlongitude="-73.99246214"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
-                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
-                        <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-    <!-- listing-item end -->
-</div>
-<!--slick-slide-item end-->
-<!--slick-slide-item-->
-<div class="slick-slide-item">
-    <!-- listing-item  -->
-    <div class="listing-item">
-        <article class="geodir-category-listing fl-wrap">
-            <div class="geodir-category-img">
-                <a href="listing-single.html"><img src="../LayoutHotel/images/gal/3.jpg" alt=""></a>
-                <div class="listing-avatar">
-                    <a href="author-single.html"><img src="../LayoutHotel/images/avatar/5.jpg" alt=""></a>
-                    <span class="avatar-tooltip">Added By  <strong>Fider Mamby</strong></span>
-                </div>
-                <div class="sale-window">Sale 10%</div>
-                <div class="geodir-category-opt">
-                    <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
-                    <div class="rate-class-name">
-                        <div class="score"><strong>Very Good</strong>102 Reviews </div>
-                        <span>4.7</span>
-                    </div>
-                </div>
-            </div>
-            <div class="geodir-category-content fl-wrap title-sin_item">
-                <div class="geodir-category-content-title fl-wrap">
-                    <div class="geodir-category-content-title-item">
-                        <h3 class="title-sin_map"><a href="listing-single.html">Gold Plaza Hotel</a></h3>
-                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> 34-42 Montgomery St , NY, USA</a></div>
-                    </div>
-                </div>
-                <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut nec tincidunt arcu, sit amet . </p>
-                <ul class="facilities-list fl-wrap">
-                    <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
-                    <li><i class="fal fa-parking"></i><span>Parking</span></li>
-                    <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
-                    <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
-                </ul>
-                <div class="geodir-category-footer fl-wrap">
-                    <div class="geodir-opt-link">
-                        <div class="geodir-category-price">Awg/Night <span>$ 210</span></div>
-                    </div>
-                    <div class="geodir-opt-list">
-                        <a href="#" class="single-map-item" data-newlatitude="40.94982541" data-newlongitude="-73.84357452"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
-                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
-                        <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-    <!-- listing-item end -->
-</div>
-<!--slick-slide-item end-->
-<!--slick-slide-item-->
-<div class="slick-slide-item">
-    <!-- listing-item  -->
-    <div class="listing-item">
-        <article class="geodir-category-listing fl-wrap">
-            <div class="geodir-category-img">
-                <a href="listing-single.html"><img src="../LayoutHotel/images/gal/5.jpg" alt=""></a>
-                <div class="listing-avatar">
-                    <a href="author-single.html"><img src="../LayoutHotel/images/avatar/1.jpg" alt=""></a>
-                    <span class="avatar-tooltip">Added By  <strong>Alisa Noory</strong></span>
-                </div>
-                <div class="sale-window big-sale">Sale 70%</div>
-                <div class="geodir-category-opt">
-                    <div class="listing-rating card-popup-rainingvis" data-starrating2="4"></div>
-                    <div class="rate-class-name">
-                        <div class="score"><strong> Good</strong>8 Reviews </div>
-                        <span>4.1</span>
-                    </div>
-                </div>
-            </div>
-            <div class="geodir-category-content fl-wrap title-sin_item">
-                <div class="geodir-category-content-title fl-wrap">
-                    <div class="geodir-category-content-title-item">
-                        <h3 class="title-sin_map"><a href="listing-single.html">Moonlight Hotel</a></h3>
-                        <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> 70 Bright St New York, USA</a></div>
-                    </div>
-                </div>
-                <p> Class aptent taciti  Mauris ac maximus neque. Nam in mauris quis libero sodales eleifend.</p>
-                <ul class="facilities-list fl-wrap">
-                    <li><i class="fal fa-wifi"></i><span>Free WiFi</span></li>
-                    <li><i class="fal fa-parking"></i><span>Parking</span></li>
-                    <li><i class="fal fa-smoking-ban"></i><span>Non-smoking Rooms</span></li>
-                    <li><i class="fal fa-utensils"></i><span> Restaurant</span></li>
-                </ul>
-                <div class="geodir-category-footer fl-wrap">
-                    <div class="geodir-opt-link">
-                        <div class="geodir-category-price">Awg/Night <span>$ 105</span></div>
-                    </div>
-                    <div class="geodir-opt-list">
-                        <a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>
-                        <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Save</span></a>
-                        <a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Find Directions</span></a>
-                    </div>
-                </div>
-            </div>
-        </article>
-    </div>
-    <!-- listing-item end -->
-</div>
+}

@@ -6,6 +6,7 @@ using System.Drawing.Printing;
 using System.Net.WebSockets;
 using System.Runtime.Intrinsics.Arm;
 using X.PagedList;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DATN_KAHotel_Final.Controllers
 {
@@ -170,6 +171,13 @@ namespace DATN_KAHotel_Final.Controllers
                         }).ToList();
             ViewBag.lichSuDatPhong = linq;
             //PagedList<ChiTietGiaoDich> list = new PagedList<ChiTietGiaoDich>(linq, pageNumber, pageSize);
+
+            //// Sử dụng thư viện PagedList để phân trang dữ liệu
+            //var pagedList = linq.ToPagedList(pageNumber, pageSize);
+
+            //// Truyền dữ liệu phân trang qua ViewBag
+            //ViewBag.lichSuDatPhong = pagedList;
+
             return View(tai_khoan);
         }
 
@@ -181,5 +189,6 @@ namespace DATN_KAHotel_Final.Controllers
             db.SaveChanges();
             return Redirect("/accountdetail/lichsudatphong?id=" + id);
         }
+
     }
 }

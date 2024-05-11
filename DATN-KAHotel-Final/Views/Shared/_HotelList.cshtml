@@ -34,7 +34,10 @@
         {
             diemTB += (double)(item.DiemThoaiMai + item.DiemNhanVien + item.DiemSachSe + item.DiemCoSo) / 4;
         }
-        diemTB = diemTB / list.Count;
+        if (list.Count != 0)
+        {
+            diemTB = diemTB / list.Count;
+        }
         return Math.Round(diemTB, 1);
     }
 
@@ -101,15 +104,15 @@
                         <img style="max-height: 302px; object-fit: cover;" src="@Url.Content("~/Images/khachsan/"+item.AnhDaiDien)" alt="">
                     </a>
                     <div class="listing-avatar">
-                        <a href="author-single.html"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
+                        <a href="#"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
                         <span class="avatar-tooltip">Được thêm bởi  <strong>Admin</strong></span>
                     </div>
-                    <div class="sale-window big-sale">Sale 70%</div>
+                    <div class="sale-window big-sale">Sale 20%</div>
                     <div class="geodir-category-opt">
                         <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
                         <div class="rate-class-name">
-                            <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@getAllDanhGiaByIdKs(item.Id).Count() Đánh giá </div>
-                            <span>@getDiemTBAllById(item.Id)</span>
+                            <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@(getAllDanhGiaByIdKs(item.Id).Count() != null ? getAllDanhGiaByIdKs(item.Id).Count() : 0) Đánh giá </div>
+                            <span>@(getDiemTBAllById(item.Id) != null ? getDiemTBAllById(item.Id) : 5.0)</span>
                         </div>
                     </div>
                 </div>
@@ -128,7 +131,20 @@
                                     }
                                 </a>
                             </h3>
-                            <div class="geodir-category-location fl-wrap"><a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> @item.DiaChi</a></div>
+                            <div class="geodir-category-location fl-wrap">
+                                <a href="#" class="map-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    @{
+                                        string dia_chi = item.DiaChi;
+                                        int gioiHanKyTuDiaChi = 40;
+                                        if (dia_chi.Length > gioiHanKyTuDiaChi)
+                                        {
+                                            dia_chi = dia_chi.Substring(0, gioiHanKyTuDiaChi) + "...";
+                                        }
+                                        @dia_chi
+                                    }
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <p>
@@ -174,3 +190,10 @@
         $("<i class='fa fa-star'></i>").duplicate(starcount2).prependTo(this);
     });
 </script>*@
+<script>
+    var cr2 = $(".card-popup-rainingvis");
+    cr2.each(function (cr) {
+        var starcount2 = $(this).attr("data-starrating2");
+        $("<i class='fa fa-star'></i>").duplicate(starcount2).prependTo(this);
+    });
+</script>

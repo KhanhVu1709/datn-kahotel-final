@@ -291,6 +291,26 @@
 
         return result;
     }
+
+    // đếm số lượng hoá đơn theo tài khoản - để làm thức năng đánh giá - chỉ đã từng đặt phòng thì mới được đánh giá
+    public int getCountDatPhongByIdTK(int? idTk, int? idKs)
+    {
+        int count = 0;
+        var query = from dp in db.DatPhongs
+                    join p in db.Phongs on dp.IdPhong equals p.Id
+                    join k in db.KhachSans on p.IdKhachSan equals k.Id
+                    where dp.IdTaiKhoan == idTk && k.Id == idKs
+                    select new
+                    {
+                        IdDatPhong = dp.Id
+                    };
+        var list = query.ToList();
+        if(list.Count() != 0)
+        {
+            count = list.Count();   
+        }
+        return count;
+    }
 }
 
 <!DOCTYPE HTML>
@@ -820,7 +840,10 @@
                                                     </div>
                                                     <textarea name="noiDung" cols="40" rows="3" placeholder="Đánh giá của bạn:"></textarea>
                                                 </fieldset>
-                                                <button type="submit" class="btn big-btn flat-btn float-btn color2-bg" style="margin-top:30px">Gửi đánh giá <i class="fal fa-paper-plane"></i></button>
+                                                @if(getCountDatPhongByIdTK(Context.Session.GetInt32("idUser"), Model.Id) != 0)
+                                                {
+                                                    <button type="submit" class="btn big-btn flat-btn float-btn color2-bg" style="margin-top:30px">Gửi đánh giá <i class="fal fa-paper-plane"></i></button>
+                                                }
                                             </form>
 
                                             <script>
