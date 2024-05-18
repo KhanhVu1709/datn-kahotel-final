@@ -132,16 +132,54 @@
     </tbody>
 </table>
 
-<div>
-    @if (Model.PageCount > 1)
-    {
-        <ul class="pagination">
-            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
-                <a class="page-link" href="?page=1">&laquo;</a>
+@{
+    string baseUrl = "admin/khachsan/danhmuckhachsan";
+}
+
+<div class="pagination">
+    <ul style="display: flex; justify-content: center;">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageNumber - 1}")">Trở về</a>
             </li>
-            <li class="page-item @(Model.PageNumber == Model.PageCount ? "disabled" : "")">
-                <a class="page-link" href="?page=@Model.PageCount">&raquo;</a>
+        }
+
+        @if (Model.PageNumber > 3)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page=1")">1</a>
             </li>
-        </ul>
-    }
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+        }
+
+        @for (int y = Model.PageNumber - 2; y <= Model.PageNumber + 2; y++)
+        {
+            if (y > 0 && y <= Model.PageCount)
+            {
+                <li class="page-item @(y == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@($"{baseUrl}?page={y}")">@y</a>
+                </li>
+            }
+        }
+
+        @if (Model.PageNumber < Model.PageCount - 2)
+        {
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageCount}")">@Model.PageCount</a>
+            </li>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageNumber + 1}")">Next</a>
+            </li>
+        }
+    </ul>
 </div>

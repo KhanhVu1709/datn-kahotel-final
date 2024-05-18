@@ -57,10 +57,10 @@ BEGIN
     SELECT DISTINCT
         p.Id,
         p.TenPhong,
+		p.IdLoaiPhong,
 		p.Id_ViTri,
         p.TrangThai,
         p.GiaPhong,
-        p.IdLoaiPhong,
         p.IdKhachSan,
         p.AnhDaiDien,
         p.IsDelete,

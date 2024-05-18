@@ -1,129 +1,409 @@
-﻿@model TaiKhoan
-@{
-    Layout = "_AccountDetail";
+﻿@{
+    //Layout = "_AccountDetail";
+    Layout = null;
+    TaiKhoan tai_khoan = ViewBag.tai_khoan as TaiKhoan;
 }
 
-@*@using DATN_KAHotel_Final.Areas.Admin.Models;
+@using DATN_KAHotel_Final.Areas.Admin.Models
 @using X.PagedList.Mvc.Core
-@model X.PagedList.IPagedList<ChiTietGiaoDich>*@
+@model X.PagedList.IPagedList<ChiTietGiaoDich>
 
-@using X.PagedList.Mvc.Core
+<!DOCTYPE HTML>
+<html lang="en">
 
+<!-- Mirrored from easybook.kwst.net/dashboard-review.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:16:58 GMT -->
+<head>
+    <!--=============== basic  ===============-->
+    <meta charset="UTF-8">
+    <title>Easybook - Hotel Booking Directory Listing Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <!--=============== css  ===============-->
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/plugins.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/style.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/color.css">
+    <!--=============== favicons ===============-->
+    <link rel="shortcut icon" href="../LayoutHotel/images/favicon.ico">
 
-<div class="container">
-    <!--dasboard-wrap-->
-    <div class="dasboard-wrap fl-wrap">
-        <!-- dashboard-content-->
-        <div class="dashboard-content fl-wrap">
-            @foreach (var item in ViewBag.lichSuDatPhong)
-            {
-                <div class="dashboard-list-box fl-wrap">
-                    <div class="dashboard-header fl-wrap">
-                        <h3>Lịch sử đặt phòng</h3>
-                    </div>
-                    <!-- dashboard-list end-->
-                    <div class="dashboard-list">
-                        <div class="dashboard-message">
-                            @{
-                                var now = DateTime.Now;
-                                var batDau = item.BatDau;
-                                var soNgay = (batDau - now).TotalDays;
-                            }
-                            @if(item.TrangThai != "Huỷ bỏ" && soNgay > 3)
-                            {
-                                <a href="/accountdetail/yeucauhuyphong?id=@item.IdTaiKhoan&idHoaDon=@item.IdHoaDon" id="cancelLink" class="disable"><span class="new-dashboard-item">Huỷ</span></a>
-                            }
-                            <div class="dashboard-message-avatar">
-                                <img style="transform: scale(2);" src="@Url.Content("~/Images/phong/"+item.AnhDaiDienPhong)" alt="">
+    <style>
+        body {
+            background-color: #544537;
+        }
+
+        .main-header, .footer-inner {
+            background-color: #544537;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+            list-style-type: none;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            top: 100%;
+            border-radius: 2px;
+        }
+
+            .suggestions-list li {
+                padding: 15px;
+                cursor: pointer;
+                text-align: left;
+                height: 100%;
+                border-bottom: 1px solid #ccc;
+            }
+
+                .suggestions-list li i {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    color: blue;
+                }
+
+                .suggestions-list li:hover {
+                    background-color: #F9B90F;
+                }
+    </style>
+</head>
+<body>
+    <!--loader-->
+    <div class="loader-wrap">
+        <div class="pin">
+            <div class="pulse"></div>
+        </div>
+    </div>
+    <!--loader end-->
+    <!-- Main  -->
+    <div id="main">
+        <!-- header-->
+        @await Html.PartialAsync("_PartialHeader")
+        <!--  header end -->
+        <!--  wrapper  -->
+        <div id="wrapper">
+            <!-- content-->
+            <div class="content">
+                <!-- section-->
+                <section class="flat-header color-bg adm-header">
+                    <div class="wave-bg wave-bg2"></div>
+                    <div class="container">
+                        <div class="dasboard-wrap fl-wrap">
+                            <div class="dasboard-breadcrumbs breadcrumbs"><a href="#">Home</a><a href="#">Dashboard</a><span>Profile page</span></div>
+                            <!--dasboard-sidebar-->
+                            <div class="dasboard-sidebar">
+                                <div class="dasboard-sidebar-content fl-wrap">
+                                    <div class="dasboard-avatar">
+                                        <img src="@Url.Content("~/Images/taikhoan/"+tai_khoan.Anh)" alt="">
+                                    </div>
+                                    <div class="dasboard-sidebar-item fl-wrap">
+                                        <h3>
+                                            <span>Chào mừng </span>
+                                            @tai_khoan.HoTen
+                                        </h3>
+                                    </div>
+                                    @*<a href="dashboard-add-listing.html" class="ed-btn">Add Hotel</a>*@
+                                    @*<div class="user-stats fl-wrap">
+                                    <ul>
+                                    <li>
+                                    Listings
+                                    <span>4</span>
+                                    </li>
+                                    <li>
+                                    Bookings
+                                    <span>32</span>
+                                    </li>
+                                    <li>
+                                    Reviews
+                                    <span>9</span>
+                                    </li>
+                                    </ul>
+                                    </div>*@
+                                    <a href="/account/logout" class="log-out-btn color-bg">Đăng xuất <i class="far fa-sign-out"></i></a>
+                                </div>
                             </div>
-                            <div class="dashboard-message-text">
-                                <h4>@item.HoTen <span></span></h4>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Tên khách sạn :</span> :
-                                    <span class="booking-text"><a href="/phong/chitietkhachsan?id=@item.IdKhachSan">@item.TenKhachSan</a></span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Tên phòng :</span> :
-                                    <span class="booking-text"><a href="#">@item.TenPhong</a></span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Số người :</span>
-                                    <span class="booking-text">@item.SoNguoi người</span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Ngày đặt :</span>
-                                    <span class="booking-text">@item.BatDau  - @item.KetThuc</span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Mail :</span>
-                                    <span class="booking-text"><a href="#" target="_top">@item.Email</a></span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Số điện thoại :</span>
-                                    <span class="booking-text"><a href="tel:@item.Sdt" target="_top">@item.Sdt</a></span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Tồng tiền đã thanh toán :</span>
-                                    <span class="booking-text"><a href="#" target="_top">@item.TongTien</a></span>
-                                </div>
-                                <div class="booking-details fl-wrap">
-                                    <span class="booking-title">Phương thức thanh toán :</span>
-                                    <span class="booking-text"> <strong class="done-paid">Trả  </strong>  sử dụng VnPay</span>
-                                </div>
-                                <span class="fw-separator"></span>
-                                @*<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere convallis purus non cursus. Cras metus neque, gravida sodales massa ut. </p>*@
+                            <!--dasboard-sidebar end-->
+                            <!-- dasboard-menu-->
+                            <div class="dasboard-menu">
+                                <div class="dasboard-menu-btn color3-bg">Dashboard Menu <i class="fal fa-bars"></i></div>
+                                <ul class="dasboard-menu-wrap">
+                                    <li>
+                                        <a href="dashboard.html"><i class="far fa-user"></i>Profile</a>
+                                        <ul>
+                                            <li><a href="dashboard-myprofile.html">Edit profile</a></li>
+                                            <li><a href="dashboard-password.html">Change Password</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="dashboard-messages.html"><i class="far fa-envelope"></i> Messages <span>3</span></a></li>
+                                    <li>
+                                        <a href="dashboard-listing-table.html"><i class="far fa-th-list"></i> My listigs  </a>
+                                        <ul>
+                                            <li><a href="#">Active</a><span>5</span></li>
+                                            <li><a href="#">Pending</a><span>2</span></li>
+                                            <li><a href="#">Expire</a><span>3</span></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="dashboard-bookings.html"> <i class="far fa-calendar-check"></i> Bookings <span>2</span></a></li>
+                                    <li><a href="dashboard-review.html" class="user-profile-act"><i class="far fa-comments"></i> Reviews </a></li>
+                                </ul>
                             </div>
+                            <!--dasboard-menu end-->
+                            <!--Tariff Plan menu-->
+                            <div class="tfp-btn"><span>Tariff Plan : </span> <strong>Extended</strong></div>
+                            <div class="tfp-det">
+                                <p>You Are on <a href="#">Extended</a> . Use link bellow to view details or upgrade. </p>
+                                <a href="#" class="tfp-det-btn color2-bg">Details</a>
+                            </div>
+                            <!--Tariff Plan menu end-->
                         </div>
                     </div>
-                    <!-- dashboard-list end-->
-                </div>
-            }
-            
-            @*@Html.PagedListPager(ViewBag.PagedList, page => Url.Action("LichSuDatPhong", new { id = Model.Id, page }))*@
+                </section>
+                <!-- section end-->
+                <!-- section-->
+                <section class="middle-padding">
+                    <div class="container">
+                        <!--dasboard-wrap-->
+                        <div class="dasboard-wrap fl-wrap">
+                            <!-- dashboard-content-->
+                            @foreach (var item in Model)
+                            {
+                                <div class="dashboard-list-box fl-wrap">
+                                    <div class="dashboard-header fl-wrap">
+                                        <h3>Lịch sử đặt phòng</h3>
+                                    </div>
+                                    <!-- dashboard-list end-->
+                                    <div class="dashboard-list">
+                                        <div class="dashboard-message">
+                                            @{
+                                                var now = DateTime.Now;
+                                                var batDau = item.BatDau;
+                                                int soNgay = (int)((batDau - now)?.TotalDays ?? 0);
+                                            }
+                                            @if (item.TrangThai != "Huỷ bỏ" && soNgay > 3)
+                                            {
+                                                <a href="/accountdetail/yeucauhuyphong?id=@item.IdTaiKhoan&idHoaDon=@item.IdHoaDon" id="cancelLink" class="disable"><span class="new-dashboard-item">Huỷ</span></a>
+                                            }
+                                            <div class="dashboard-message-avatar">
+                                                <img style="transform: scale(2);" src="@Url.Content("~/Images/phong/"+item.AnhDaiDienPhong)" alt="">
+                                            </div>
+                                            <div class="dashboard-message-text">
+                                                <h4>@item.HoTen <span></span></h4>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Tên khách sạn :</span> :
+                                                    <span class="booking-text"><a href="/phong/chitietkhachsan?id=@item.IdKhachSan">@item.TenKhachSan</a></span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Tên phòng :</span> :
+                                                    <span class="booking-text"><a href="#">@item.TenPhong</a></span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Số người :</span>
+                                                    <span class="booking-text">@item.SoNguoi người</span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Ngày dự kiến ở :</span>
+                                                    <span class="booking-text">@item.BatDau - @item.KetThuc</span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Mail :</span>
+                                                    <span class="booking-text"><a href="#" target="_top">@item.Email</a></span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Số điện thoại :</span>
+                                                    <span class="booking-text"><a href="tel:@item.Sdt" target="_top">@item.Sdt</a></span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Tồng tiền đã thanh toán :</span>
+                                                    <span class="booking-text"><a href="#" target="_top">@string.Format("{0:N0} VNĐ", @item.TongTien) </a></span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Phương thức thanh toán :</span>
+                                                    <span class="booking-text"> <strong class="done-paid">Trả  </strong>  sử dụng VnPay</span>
+                                                </div>
+                                                <div class="booking-details fl-wrap">
+                                                    <span class="booking-title">Trạng thái đơn :</span>
+                                                    <span class="booking-text"> @item.TrangThai</span>
+                                                </div>
+                                                <span class="fw-separator"></span>
+                                                @*<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc posuere convallis purus non cursus. Cras metus neque, gravida sodales massa ut. </p>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- dashboard-list end-->
+                                </div>
+                            }
+                            <!-- dashboard-list-box end-->
+                            <!-- pagination-->
+                            @*<div class="pagination">
+                                <a href="#" class="prevposts-link"><i class="fa fa-caret-left"></i></a>
+                                <a href="#" class="current-page">1</a>
+                                <a href="#">2</a>
+                                <a href="#">3</a>
+                                <a href="#">4</a>
+                                <a href="#" class="nextposts-link"><i class="fa fa-caret-right"></i></a>
+                            </div>*@
+                            @{
+                                string baseUrl = "/accountdetail/lichsudatphong?id=" + ViewBag.tai_khoan.Id;
+                            }
 
-            <!-- pagination-->
-            @*<div class="pagination">
-                <a href="#" class="prevposts-link"><i class="fa fa-caret-left"></i></a>
-                <a href="#" class="current-page">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">4</a>
-                <a href="#" class="nextposts-link"><i class="fa fa-caret-right"></i></a>
-            </div>*@
+                            <div class="pagination">
+                                <ul style="display: flex; justify-content: center;">
+                                    @if (Model.HasPreviousPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@($"{baseUrl}&page={Model.PageNumber - 1}")">Trở về</a>
+                                        </li>
+                                    }
+
+                                    @for (int i = 1; i <= Model.PageCount; i++)
+                                    {
+                                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                                            <a class="page-link" href="@($"{baseUrl}&page={i}")">@i</a>
+                                        </li>
+                                    }
+
+                                    @if (Model.HasNextPage)
+                                    {
+                                        <li class="page-item">
+                                            <a class="page-link" href="@($"{baseUrl}&page={Model.PageNumber + 1}")">Tiếp</a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+
+                        </div>
+                        <!-- dasboard-wrap end-->
+                    </div>
+                </section>
+                <div class="limit-box fl-wrap"></div>
+            </div>
+            <!-- content end-->
         </div>
-        <!-- dashboard-list-box end-->
+        <!--wrapper end -->
+        <!--footer -->
+        @await Html.PartialAsync("_PartialFooter")
+        <!--footer end -->
+        <!--map-modal -->
+        <div class="map-modal-wrap">
+            <div class="map-modal-wrap-overlay"></div>
+            <div class="map-modal-item">
+                <div class="map-modal-container fl-wrap">
+                    <h3>Hotel Title</h3>
+                    <div class="map-modal fl-wrap">
+                        <div id="singleMap" data-latitude="40.7" data-longitude="-73.1"></div>
+                    </div>
+                    <a href="#" class="btn color2-bg">View Details <i class="fal fa-angle-right"></i></a>
+                    <div class="map-modal-close"><i class="far fa-times"></i></div>
+                </div>
+            </div>
+        </div>
+        <!--map-modal end -->
+        <!--register form -->
+        <div class="main-register-wrap modal">
+            <div class="reg-overlay"></div>
+            <div class="main-register-holder">
+                <div class="main-register fl-wrap">
+                    <div class="close-reg color-bg"><i class="fal fa-times"></i></div>
+                    <ul class="tabs-menu">
+                        <li class="current"><a href="#tab-1"><i class="fal fa-sign-in-alt"></i> Login</a></li>
+                        <li><a href="#tab-2"><i class="fal fa-user-plus"></i> Register</a></li>
+                    </ul>
+                    <!--tabs -->
+                    <div id="tabs-container">
+                        <div class="tab">
+                            <!--tab -->
+                            <div id="tab-1" class="tab-content">
+                                <h3>Sign In <span>Easy<strong>Book</strong></span></h3>
+                                <div class="custom-form">
+                                    <form method="post" name="registerform">
+                                        <label>Username or Email Address <span>*</span> </label>
+                                        <input name="email" type="text" onClick="this.select()" value="">
+                                        <label>Password <span>*</span> </label>
+                                        <input name="password" type="password" onClick="this.select()" value="">
+                                        <button type="submit" class="log-submit-btn"><span>Log In</span></button>
+                                        <div class="clearfix"></div>
+                                        <div class="filter-tags">
+                                            <input id="check-a" type="checkbox" name="check">
+                                            <label for="check-a">Remember me</label>
+                                        </div>
+                                    </form>
+                                    <div class="lost_password">
+                                        <a href="#">Lost Your Password?</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab end -->
+                            <!--tab -->
+                            <div class="tab">
+                                <div id="tab-2" class="tab-content">
+                                    <h3>Sign Up <span>Easy<strong>Book</strong></span></h3>
+                                    <div class="custom-form">
+                                        <form method="post" name="registerform" class="main-register-form" id="main-register-form2">
+                                            <label>Full Name <span>*</span> </label>
+                                            <input name="name" type="text" onClick="this.select()" value="">
+                                            <label>Email Address <span>*</span></label>
+                                            <input name="email" type="text" onClick="this.select()" value="">
+                                            <label>Password <span>*</span></label>
+                                            <input name="password" type="password" onClick="this.select()" value="">
+                                            <button type="submit" class="log-submit-btn"><span>Register</span></button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--tab end -->
+                        </div>
+                        <!--tabs end -->
+                        <div class="log-separator fl-wrap"><span>or</span></div>
+                        <div class="soc-log fl-wrap">
+                            <p>For faster login or register use your social account.</p>
+                            <a href="#" class="facebook-log"><i class="fab fa-facebook-f"></i>Connect with Facebook</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--register form end -->
+        <a class="to-top"><i class="fas fa-caret-up"></i></a>
     </div>
-    <!-- dasboard-wrap end-->
-</div>
-
-
-<script>
-    $(document).ready(function () {
-        $('a.disabled').click(function (event) {
-            event.preventDefault(); // Ngăn chặn hành động mặc định khi click vào liên kết
+    <!-- Main end -->
+    <!--=============== scripts  ===============-->
+    <script type="text/javascript" src="../LayoutHotel/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/plugins.js"></script>
+    <script type="text/javascript" src="../LayoutHotel/js/scripts.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwJSRi0zFjDemECmFl9JtRj1FY7TiTRRo&amp;libraries=places&amp;callback=initAutocomplete"></script>
+    <script>
+        $(document).ready(function () {
+            $('a.disabled').click(function (event) {
+                event.preventDefault(); // Ngăn chặn hành động mặc định khi click vào liên kết
+            });
         });
-    });
-</script>
+    </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Lấy đối tượng nút Huỷ
-        var cancelButton = document.getElementById("cancelLink");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Lấy đối tượng nút Huỷ
+            var cancelButton = document.getElementById("cancelLink");
 
-        // Bắt sự kiện click
-        cancelButton.addEventListener("click", function (event) {
-            // Ngăn chặn hành động mặc định của nút a
-            event.preventDefault();
+            // Bắt sự kiện click
+            cancelButton.addEventListener("click", function (event) {
+                // Ngăn chặn hành động mặc định của nút a
+                event.preventDefault();
 
-            // Hiển thị cảnh báo
-            var confirmation = confirm("Bạn có chắc chắn muốn huỷ phòng?");
+                // Hiển thị cảnh báo
+                var confirmation = confirm("Bạn có chắc chắn muốn huỷ phòng?");
 
-            // Nếu người dùng chọn "OK" trong cảnh báo
-            if (confirmation) {
-                // Chuyển hướng đến đường dẫn trong href của nút a
-                window.location.href = cancelButton.href;
-            }
+                // Nếu người dùng chọn "OK" trong cảnh báo
+                if (confirmation) {
+                    // Chuyển hướng đến đường dẫn trong href của nút a
+                    window.location.href = cancelButton.href;
+                }
+            });
         });
-    });
-</script>
+    </script>
+</body>
 
+<!-- Mirrored from easybook.kwst.net/dashboard-review.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:16:58 GMT -->
+</html>

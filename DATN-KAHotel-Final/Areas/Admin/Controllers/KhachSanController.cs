@@ -17,7 +17,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
         {
             int pageSize = 10;
             int pageNumber = page == null || page < 0 ? 1 : page.Value;
-            var listKhachSan = db.KhachSans.OrderBy(item => item.Id).ToList();
+            var listKhachSan = db.KhachSans.ToList().Where(x => (bool)!x.IsDelete).OrderBy(item => item.Id).ToList();
             PagedList<KhachSan> list = new PagedList<KhachSan>(listKhachSan, pageNumber, pageSize);
             return View(list);
         }
@@ -68,6 +68,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
             khach_san.IdTinhThanh = id_tinh;
             khach_san.IsDelete = false;
             khach_san.SoSao = so_sao;
+            khach_san.IsDelete = false;
             db.KhachSans.Add(khach_san);
             db.SaveChanges();
 

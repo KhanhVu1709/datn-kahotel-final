@@ -18,7 +18,6 @@
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "7.0.12",
           "Newtonsoft.Json": "13.0.3",
           "PagedList.Mvc": "4.5.0",
-          "X.PagedList": "9.1.2",
           "X.PagedList.Mvc.Core": "9.1.2"
         },
         "runtime": {

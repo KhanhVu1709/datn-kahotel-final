@@ -16,7 +16,12 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
         {
             int pageSize = 10;
             int pageNumber = page == null || page < 0 ? 1 : page.Value;
-            var listUser = db.TaiKhoans.OrderBy(item => item.Id).ToList();
+            //var listUser = db.TaiKhoans.ToList().Where(x => !x.IsDelete).OrderBy(item => item.Id).ToList();
+            var listUser = db.TaiKhoans
+                .ToList() // Chuyển danh sách thành List trước khi thực hiện các phép lọc và sắp xếp
+                .Where(item => (bool)!item.IsDelete) // Lọc các đối tượng có IsDelete = false
+                .OrderBy(item => item.Id)
+                .ToList();
             PagedList<TaiKhoan> list = new PagedList<TaiKhoan>(listUser, pageNumber, pageSize);
             return View(list);
         }
@@ -72,7 +77,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
             if (existingUser != null)
             {
                 TempData["Error"] = "Đã tồn tại tài khoản này rồi.";
-                return RedirectToAction("Create", "User");
+                return Redirect("../taikhoan/create");
             }
             else
             {
@@ -88,8 +93,17 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
                 user.Email = email;
                 user.SoDienThoai = sdt;
                 user.TrangThai = trang_thai;
+                user.IsDelete = false;
                 db.Add(user);
                 db.SaveChanges();
+
+                int id_newUser = user.Id;
+                PhanQuyen pq = new PhanQuyen();
+                pq.IdTaiKhoan = id_newUser;
+                pq.IdQuyen = 5;
+                db.PhanQuyens.Add(pq);
+                db.SaveChanges();
+
                 return RedirectToAction("danhmuctaikhoan", "taikhoan");
             }
         }

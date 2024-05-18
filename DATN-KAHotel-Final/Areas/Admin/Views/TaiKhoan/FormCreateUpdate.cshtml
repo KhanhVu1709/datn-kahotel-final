@@ -83,7 +83,7 @@
 <hr />
 
 <div class="row">
-        <form action="@ViewBag.action" method="post" enctype="multipart/form-data">
+    <form action="@ViewBag.action" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="col-md-4 left">
@@ -165,6 +165,12 @@
         </form>
 </div>
 
+<div class="row mt-4">
+    <div class="col text-center">
+        <a href="/admin/taikhoan/danhmuctaikhoan" class="btn btn-secondary">Trở về trang chủ</a>
+    </div>
+</div>
+
 <script>
     // Lắng nghe sự kiện khi người dùng chọn file ảnh
     document.querySelector('input[type="file"]').addEventListener('change', function () {
@@ -183,4 +189,41 @@
         }
     });
 
+</script>
+
+<script>
+// Hàm kiểm tra validation của form trước khi gửi
+    function validateForm() {
+        // Lấy giá trị của các trường trong form
+        var tenDangNhap = document.getElementById('TenDangNhap').value;
+        var matKhau = document.getElementById('MatKhau').value;
+        var hoTen = document.getElementById('HoTen').value;
+        var email = document.getElementById('Email').value;
+        var soDienThoai = document.getElementById('SoDienThoai').value;
+        var ngaySinh = document.getElementById('NgaySinh').value;
+
+        // Kiểm tra mật khẩu có ít nhất 6 ký tự
+        if (matKhau.length < 6) {
+            alert("Mật khẩu phải có ít nhất 6 ký tự");
+            return false; // Ngăn chặn việc gửi form
+        }
+
+        // Kiểm tra xem các trường có được nhập đầy đủ không
+        if (tenDangNhap == "" || matKhau == "" || hoTen == "" || email == "" || soDienThoai == "" || ngaySinh == "") {
+            alert("Vui lòng điền đầy đủ thông tin");
+            return false; // Ngăn chặn việc gửi form
+        }
+
+        // Kiểm tra định dạng số điện thoại
+        var phonePattern = /^\d{10,11}$/;
+        if (!soDienThoai.match(phonePattern)) {
+            alert("Số điện thoại không hợp lệ");
+            return false; // Ngăn chặn việc gửi form
+        }
+
+        // Các kiểm tra khác có thể được thêm vào ở đây
+
+        // Nếu các kiểm tra thành công, cho phép gửi form
+        return true;
+    }
 </script>

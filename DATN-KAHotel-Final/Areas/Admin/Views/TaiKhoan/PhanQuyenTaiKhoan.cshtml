@@ -22,7 +22,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label class="control-label">Phân quyền</label>
+                <h2 class="control-label">Phân quyền</h2>
 
                 @{
                     List<Quyen> listAll = getAllLoaiUser();
@@ -67,6 +67,8 @@
     </div>
 </div>
 
-<div>
-    <a asp-area="Admin" asp-controller="User" asp-action="DanhMucTaiKhoan">Trở lại</a>
+<div class="row">
+    <div class="col text-center">
+        <a href="/admin/taikhoan/danhmuctaikhoan" class="btn btn-secondary" style="float: left;">Trở về trang chủ</a>
+    </div>
 </div>

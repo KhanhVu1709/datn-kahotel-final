@@ -140,10 +140,12 @@ namespace DATN_KAHotel_Final.Controllers
         // Lịch sử đặt phòng của khách hàng
         public IActionResult LichSuDatPhong(int? id, int? page)
         {
-            int pageSize = 10;
+            int pageSize = 5;
             int pageNumber = page == null || page < 0 ? 1 : page.Value;
 
             TaiKhoan tai_khoan = db.TaiKhoans.FirstOrDefault(t => t.Id == id);
+
+            ViewBag.tai_khoan = tai_khoan;
 
             var linq = (from t in db.TaiKhoans
                         join dp in db.DatPhongs on t.Id equals dp.IdTaiKhoan
@@ -169,16 +171,10 @@ namespace DATN_KAHotel_Final.Controllers
                             TenKhachSan = ks.TenKhachSan,
                             TenPhong = p.TenPhong,
                         }).ToList();
-            ViewBag.lichSuDatPhong = linq;
-            //PagedList<ChiTietGiaoDich> list = new PagedList<ChiTietGiaoDich>(linq, pageNumber, pageSize);
+            //ViewBag.lichSuDatPhong = linq;
+            PagedList<ChiTietGiaoDich> list = new PagedList<ChiTietGiaoDich>(linq, pageNumber, pageSize);
 
-            //// Sử dụng thư viện PagedList để phân trang dữ liệu
-            //var pagedList = linq.ToPagedList(pageNumber, pageSize);
-
-            //// Truyền dữ liệu phân trang qua ViewBag
-            //ViewBag.lichSuDatPhong = pagedList;
-
-            return View(tai_khoan);
+            return View(list);
         }
 
         public IActionResult YeuCauHuyPhong(int? id, int? idHoaDon)

@@ -31,7 +31,14 @@
             {
                 <div class="header-user-menu">
                     <div class="header-user-name">
-                        <span><img src="@Url.Content("~/Images/taikhoan/"+getTaiKhoanById(@Context.Session.GetInt32("idUser")).Anh)" alt=""></span>
+                        @if (getTaiKhoanById(@Context.Session.GetInt32("idUser")).Anh != null)
+                        {
+                            <span><img src="@Url.Content("~/Images/taikhoan/"+getTaiKhoanById(@Context.Session.GetInt32("idUser")).Anh)" alt=""></span>
+                        } else
+                        {
+                            <span><img src="~/Images/taikhoan/avatar5.png" alt=""></span>
+                        }
+
                         Chào, @Context.Session.GetString("taikhoan")
                     </div>
                     <ul>
