@@ -25,6 +25,20 @@ public partial class DatPhong
 
     public DateTime? NgayDat { get; set; }
 
+    public string? HoVaTen { get; set; }
+
+    public string? Email { get; set; }
+
+    public string? SoDienThoai { get; set; }
+
+    public string? DiaChi { get; set; }
+
+    public string? TinhTrangKh { get; set; }
+
+    public string? MaBuuDien { get; set; }
+
+    public string? GhiChu { get; set; }
+
     public virtual Phong? IdPhongNavigation { get; set; }
 
     public virtual TaiKhoan? IdTaiKhoanNavigation { get; set; }

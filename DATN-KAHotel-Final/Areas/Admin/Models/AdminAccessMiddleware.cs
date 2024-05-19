@@ -128,6 +128,39 @@
                     return;
                 }
             }
+            //
+            if (context.Request.Path.StartsWithSegments("/accountdetail/lichsudatphong"))
+            {
+                // Kiểm tra xem người dùng đã đăng nhập chưa
+                if (!context.User.Identity.IsAuthenticated)
+                {
+                    // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                    context.Response.Redirect("/account/login");
+                    return;
+                }
+            }
+            //
+            if (context.Request.Path.StartsWithSegments("/accountdetail/ThongTinTaiKhoan"))
+            {
+                // Kiểm tra xem người dùng đã đăng nhập chưa
+                if (!context.User.Identity.IsAuthenticated)
+                {
+                    // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                    context.Response.Redirect("/account/login");
+                    return;
+                }
+            }
+            //
+            if (context.Request.Path.StartsWithSegments("/accountdetail/DoiMatKhau"))
+            {
+                // Kiểm tra xem người dùng đã đăng nhập chưa
+                if (!context.User.Identity.IsAuthenticated)
+                {
+                    // Nếu chưa đăng nhập, chuyển hướng đến trang đăng nhập
+                    context.Response.Redirect("/account/login");
+                    return;
+                }
+            }
             // Nếu không phải trang admin hoặc có quyền, chuyển tiếp yêu cầu đến middleware tiếp theo
             await _next(context);
         }

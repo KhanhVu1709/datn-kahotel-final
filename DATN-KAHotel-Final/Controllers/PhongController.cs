@@ -7,6 +7,10 @@ using Microsoft.AspNet.Identity;
 using DATN_KAHotel_Final.Service;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR.Protocol;
+using Microsoft.AspNetCore.Http;
+using System.Net.Mail;
+using System.Net;
+using System.Collections.Generic;
 
 namespace DATN_KAHotel_Final.Controllers
 {
@@ -202,6 +206,94 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         #region Thanhtoan
+        private void SendConfirmationEmail(DatPhong bookingModel, string customerEmail, string paymentMethod)
+        {
+            string subject;
+            string paymentInfo;
+            var start = HttpContext.Session.GetString("bat_dau");
+            var end = HttpContext.Session.GetString("ket_thuc");
+            // Tạo nội dung email
+            var tenks = (from ks in db.KhachSans
+                         join p in db.Phongs on ks.Id equals p.IdKhachSan
+                         where p.Id == bookingModel.IdPhong
+                         select ks.TenKhachSan).FirstOrDefault();
+            var diachi = (from ks in db.KhachSans
+                          join p in db.Phongs on ks.Id equals p.IdKhachSan
+                          where p.Id == bookingModel.IdPhong
+                          select ks.DiaChi).FirstOrDefault();
+            var phong = db.Phongs.FirstOrDefault(x => x.Id == bookingModel.IdPhong);
+            var data = Cart.GetCart(HttpContext.Session); ;
+            var strSanPham = "<table border='1'>";
+            strSanPham += "<thead><tr><th>Tên khách sạn</th><th>Tên phòng</th><th>Ngày đến</th><th>Ngày đi</th><th>Địa chỉ</th><th>";
+            if (paymentMethod == "Thanh toán cọc")
+            {
+                strSanPham += "Tiền cọc</th><th>Cần thanh toán thêm</th>";
+            }
+            else
+            {
+                strSanPham += "Tổng tiền</th>";
+            }
+            strSanPham += "</tr></thead>";
+            strSanPham += "<tbody>";
+            strSanPham += "<tr>";
+            strSanPham += $"<td>{tenks}</td>";
+            strSanPham += $"<td>{phong.TenPhong}</td>";
+            strSanPham += $"<td>{start}</td>";
+            strSanPham += $"<td>{end}</td>";
+            strSanPham += $"<td>{diachi}</td>";
+            if (paymentMethod == "Thanh toán cọc")
+            {
+                //strSanPham += $"<td>{data.Sum(x => x.TongTien()) * 40 / 100}</td>";
+                //strSanPham += $"<td>{data.Sum(x => x.TongTien()) * 60 / 100}</td>";
+            }
+            else
+            {
+                strSanPham += $"<td>{data.Sum(x => x.phong.GiaPhong)}</td>";
+            }
+            strSanPham += "</tr>";
+            strSanPham += "</tbody></table>";
+            var strThongTinKhachHang = $@"
+    <p>Họ tên khách hàng: {bookingModel.HoVaTen}</p>
+    <p>Email: {bookingModel.Email}</p>
+    <p>Số điện thoại: {bookingModel.SoDienThoai}</p>
+    ";
+            var fullContent = $@"
+    <h2>Thông tin đặt phòng</h2>
+        {strSanPham}
+    <h2>Thông tin khách hàng</h2>
+        {strThongTinKhachHang}
+    ";
+
+            // Xác định tiêu đề và thông tin thanh toán dựa trên phương thức thanh toán
+            if (paymentMethod == "Thanh toán cọc")
+            {
+                subject = "Xác nhận đặt cọc phòng thành công";
+                paymentInfo = "Bạn đã đặt cọc phòng thành công.";
+            }
+            else
+            {
+                subject = "Phòng bạn được đặt thành công";
+                paymentInfo = "Cảm ơn bạn đã đặt phòng.";
+            }
+
+            // Gửi email
+            var smtpClient = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential("doducviet3012@gmail.com", "ebfwregutahnwhrj"),
+                EnableSsl = true,
+            };
+            var fromAddress = new MailAddress("doducviet3012@gmail.com", "Hotel");
+            var toAddress = new MailAddress(customerEmail);
+            var mailMessage = new MailMessage(fromAddress, toAddress)
+            {
+                Subject = subject,
+                Body = $"{fullContent}<p>{paymentInfo}</p>",
+                IsBodyHtml = true
+            };
+            smtpClient.Send(mailMessage);
+        }
+
         public IActionResult Checkout(int id, DateTime ngayDen, DateTime ngayDi)
         {
             Cart.AddItem(HttpContext.Session, id, ngayDen, ngayDi);
@@ -219,18 +311,27 @@ namespace DATN_KAHotel_Final.Controllers
         public IActionResult Checkout(IFormCollection fc)
         {
             int id_user = Convert.ToInt32(fc["id"]);
-            string ho = fc["ho"].ToString();
-            string ten = fc["ten"].ToString();
-            string ho_ten = ho + " " + ten;
+            string hoVaTen = fc["ho"].ToString() + " " + fc["ten"].ToString();
+            //string ten = fc["ten"].ToString();
+            //string ho_ten = ho + " " + ten;
             string phone = fc["phone"].ToString();
             string email = fc["email"].ToString();
-            string thanh_pho = fc["thanhpho"].ToString();
-            string duong_pho = fc["duongpho"].ToString();
+            string diaChi = fc["duongpho"].ToString() + " " + fc["thanhpho"].ToString();
             string tinh_trang = fc["tinhtrang"].ToString();
             string ma_buu_dien = fc["mabuudien"].ToString();
             string ghi_chu = fc["ghichu"].ToString();
 
             string payment = fc["payment"].ToString();
+
+            // Lưu trữ các biến vào session
+            HttpContext.Session.SetString("hoVaTen", hoVaTen);
+            HttpContext.Session.SetString("phone", phone);
+            HttpContext.Session.SetString("email", email);
+            HttpContext.Session.SetString("diaChi", diaChi);
+            HttpContext.Session.SetString("tinhtrang", tinh_trang);
+            HttpContext.Session.SetString("mabuudien", ma_buu_dien);
+            HttpContext.Session.SetString("ghichu", ghi_chu);
+            HttpContext.Session.SetString("payment", payment);
 
             HttpContext.Session.SetInt32("IdUser", id_user);
 
@@ -243,14 +344,14 @@ namespace DATN_KAHotel_Final.Controllers
             int soNgay = (int)khoang_cach.TotalDays;
 
             // thánh toán VNPAY
-            if (payment == "Bước thanh toán")
+            if (payment == "Thanh toán VnPay")
             {
                 TaiKhoan user = db.TaiKhoans.FirstOrDefault(u => u.Id == id_user);
                 var vnPayModel = new PaymentInfomationModel
                 {
                     Amount = Cart.CartTotal(HttpContext.Session, bat_dau, ket_thuc),
                     CreatedDate = DateTime.Now,
-                    OrderDescription = $"{ho_ten} {phone} {thanh_pho}",
+                    OrderDescription = $"{hoVaTen} {phone} {diaChi}",
                     Name = user.HoTen,
                     OrderId = new Random().Next(1000, 10000)
                 };
@@ -292,6 +393,16 @@ namespace DATN_KAHotel_Final.Controllers
         //
         public IActionResult PaymentCallBack()
         {
+            // Nhận lại các giá trị từ session
+            string? hoVaTen = HttpContext.Session.GetString("hoVaTen");
+            string? phone = HttpContext.Session.GetString("phone");
+            string? email = HttpContext.Session.GetString("email");
+            string? diaChi = HttpContext.Session.GetString("diaChi");
+            string? tinh_trang = HttpContext.Session.GetString("tinhtrang");
+            string? ma_buu_dien = HttpContext.Session.GetString("mabuudien");
+            string? ghi_chu = HttpContext.Session.GetString("ghichu");
+            string? payment = HttpContext.Session.GetString("payment");
+
             var response = _vnPayService.PaymentExecute(Request.Query);
 
             if (response == null || response.VnPayResponseCode != "00")
@@ -328,14 +439,37 @@ namespace DATN_KAHotel_Final.Controllers
                     dat_phong.TongTien = don_gia;
                     dat_phong.BatDau = bat_dau;
                     dat_phong.KetThuc = ket_thuc;
-                    dat_phong.ThanhToan = vnpay_payment;
+                    dat_phong.ThanhToan = payment;
                     dat_phong.Status = false;
                     dat_phong.IdTrangThai = id_trang_thai;
                     dat_phong.NgayDat = DateTime.Now;
+                    dat_phong.HoVaTen = hoVaTen;
+                    dat_phong.Email = email;
+                    dat_phong.DiaChi = diaChi;
+                    dat_phong.GhiChu = ghi_chu;
+                    dat_phong.TinhTrangKh = tinh_trang;
+                    dat_phong.MaBuuDien = ma_buu_dien;
+                    dat_phong.SoDienThoai = phone;
 
                     db.DatPhongs.Add(dat_phong);
+
+                    // gửi mail khi đặt phòng thành công
+                    SendConfirmationEmail(new DatPhong { HoVaTen = hoVaTen, Email = email, SoDienThoai = phone, DiaChi = diaChi, GhiChu = ghi_chu, MaBuuDien = ma_buu_dien, TinhTrangKh = tinh_trang, IdPhong = id_phong }, email, payment);
                 }
                 db.SaveChanges();
+
+                // Xóa các session sau khi đã hoàn thành
+                HttpContext.Session.Remove("hoVaTen");
+                HttpContext.Session.Remove("phone");
+                HttpContext.Session.Remove("email");
+                HttpContext.Session.Remove("diaChi");
+                HttpContext.Session.Remove("tinhtrang");
+                HttpContext.Session.Remove("mabuudien");
+                HttpContext.Session.Remove("ghichu");
+                HttpContext.Session.Remove("payment");
+                HttpContext.Session.Remove("bat_dau");
+                HttpContext.Session.Remove("ket_thuc");
+
                 Cart.CartDestroy(HttpContext.Session);
                 return RedirectToAction("Index", "Home");
             }

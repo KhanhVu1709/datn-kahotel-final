@@ -19,17 +19,11 @@ public partial class QlksContext : DbContext
 
     public virtual DbSet<DatPhong> DatPhongs { get; set; }
 
-    public virtual DbSet<DichVu> DichVus { get; set; }
-
-    public virtual DbSet<GiaoDich> GiaoDiches { get; set; }
-
     public virtual DbSet<HinhAnh> HinhAnhs { get; set; }
 
     public virtual DbSet<KhachSan> KhachSans { get; set; }
 
     public virtual DbSet<KhachSanTienNghi> KhachSanTienNghis { get; set; }
-
-    public virtual DbSet<LoaiPhong> LoaiPhongs { get; set; }
 
     public virtual DbSet<PhanQuyen> PhanQuyens { get; set; }
 
@@ -68,9 +62,17 @@ public partial class QlksContext : DbContext
             entity.ToTable("DatPhong");
 
             entity.Property(e => e.BatDau).HasColumnType("datetime");
+            entity.Property(e => e.DiaChi).HasMaxLength(255);
+            entity.Property(e => e.Email).HasMaxLength(255);
+            entity.Property(e => e.HoVaTen).HasMaxLength(255);
             entity.Property(e => e.KetThuc).HasColumnType("datetime");
+            entity.Property(e => e.MaBuuDien).HasMaxLength(255);
             entity.Property(e => e.NgayDat).HasColumnType("datetime");
+            entity.Property(e => e.SoDienThoai).HasMaxLength(10);
             entity.Property(e => e.ThanhToan).HasMaxLength(100);
+            entity.Property(e => e.TinhTrangKh)
+                .HasMaxLength(255)
+                .HasColumnName("TinhTrangKH");
 
             entity.HasOne(d => d.IdPhongNavigation).WithMany(p => p.DatPhongs)
                 .HasForeignKey(d => d.IdPhong)
@@ -83,31 +85,6 @@ public partial class QlksContext : DbContext
             entity.HasOne(d => d.IdTrangThaiNavigation).WithMany(p => p.DatPhongs)
                 .HasForeignKey(d => d.IdTrangThai)
                 .HasConstraintName("FK_DatPhong_TrangThaiDon");
-        });
-
-        modelBuilder.Entity<DichVu>(entity =>
-        {
-            entity.ToTable("DichVu");
-
-            entity.Property(e => e.GhiChu)
-                .HasMaxLength(10)
-                .IsFixedLength();
-            entity.Property(e => e.TenDichVu).HasMaxLength(255);
-        });
-
-        modelBuilder.Entity<GiaoDich>(entity =>
-        {
-            entity.ToTable("GiaoDich");
-
-            entity.Property(e => e.ThoiGianGiaoDich).HasColumnType("datetime");
-
-            entity.HasOne(d => d.IdDichVuNavigation).WithMany(p => p.GiaoDiches)
-                .HasForeignKey(d => d.IdDichVu)
-                .HasConstraintName("FK_GiaoDich_DichVu");
-
-            entity.HasOne(d => d.IdTaiKhoanNavigation).WithMany(p => p.GiaoDiches)
-                .HasForeignKey(d => d.IdTaiKhoan)
-                .HasConstraintName("FK_GiaoDich_TaiKhoan");
         });
 
         modelBuilder.Entity<HinhAnh>(entity =>
@@ -149,14 +126,6 @@ public partial class QlksContext : DbContext
                 .HasConstraintName("FK_KhachSan_TienNghi_TienNghi");
         });
 
-        modelBuilder.Entity<LoaiPhong>(entity =>
-        {
-            entity.ToTable("LoaiPhong");
-
-            entity.Property(e => e.GhiChu).HasMaxLength(255);
-            entity.Property(e => e.TenLoai).HasMaxLength(255);
-        });
-
         modelBuilder.Entity<PhanQuyen>(entity =>
         {
             entity.ToTable("PhanQuyen");
@@ -175,16 +144,11 @@ public partial class QlksContext : DbContext
             entity.ToTable("Phong");
 
             entity.Property(e => e.AnhDaiDien).HasMaxLength(255);
-            entity.Property(e => e.IdViTri).HasColumnName("Id_ViTri");
             entity.Property(e => e.TenPhong).HasMaxLength(255);
 
             entity.HasOne(d => d.IdKhachSanNavigation).WithMany(p => p.Phongs)
                 .HasForeignKey(d => d.IdKhachSan)
                 .HasConstraintName("FK_Phong_KhachSan");
-
-            entity.HasOne(d => d.IdLoaiPhongNavigation).WithMany(p => p.Phongs)
-                .HasForeignKey(d => d.IdLoaiPhong)
-                .HasConstraintName("FK_Phong_LoaiPhong");
         });
 
         modelBuilder.Entity<PhongTienNghi>(entity =>

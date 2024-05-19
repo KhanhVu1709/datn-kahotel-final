@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "x3MUibZcTjh6tbBaZd4EQMFzVVS2vU7N7k+Q0cw8auA=",
+  "Hash": "xtKbpbFIG6XtE1N8BMMxJHBR5LS8nv1TniBekipkTjQ=",
   "Source": "DATN-KAHotel-Final",
   "BasePath": "_content/DATN-KAHotel-Final",
   "Mode": "Default",
@@ -287,6 +287,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\khachsan\\133599530554688821_cccdms.jpg"
+    },
+    {
+      "Identity": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\Images\\khachsan\\133605671107116026_angiang3.jpg",
+      "SourceId": "DATN-KAHotel-Final",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\",
+      "BasePath": "_content/DATN-KAHotel-Final",
+      "RelativePath": "Images/khachsan/133605671107116026_angiang3.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\khachsan\\133605671107116026_angiang3.jpg"
     },
     {
       "Identity": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\Images\\khachsan\\aparthotel.jpg",
@@ -1834,6 +1851,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\phong\\133599530839937337_MucTieuCanHoc.jpg"
+    },
+    {
+      "Identity": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\Images\\phong\\133605671399031309_angiang4.jpg",
+      "SourceId": "DATN-KAHotel-Final",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\",
+      "BasePath": "_content/DATN-KAHotel-Final",
+      "RelativePath": "Images/phong/133605671399031309_angiang4.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\phong\\133605671399031309_angiang4.jpg"
     },
     {
       "Identity": "E:\\ASPNET\\DATN-KAHotel-Final\\DATN-KAHotel-Final\\wwwroot\\Images\\phong\\bhotel1.jpg",
