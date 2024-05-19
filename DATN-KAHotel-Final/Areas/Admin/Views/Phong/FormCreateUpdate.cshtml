@@ -121,7 +121,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <form method="post" action="@ViewBag.action" enctype="multipart/form-data">
+        <form method="post" action="@ViewBag.action" enctype="multipart/form-data" onsubmit="return validateForm()">
             <div id="step2" style="width: 100%" class="form-1">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
@@ -350,4 +350,56 @@
     }
 </script>
 
+<script>
+    function validateForm() {
+        // Lấy giá trị các trường cần kiểm tra
+        var tenPhong = document.getElementById('TenPhong').value;
+        var giaPhong = document.getElementById('GiaPhong').value;
+        var soNguoi = document.getElementById('SoNguoi').value;
+        var soGiuong = document.getElementById('SoGiuong').value;
+        var kichThuocPhong = document.getElementById('KichThuocPhong').value;
+        var moTa = document.getElementById('MoTa').value;
+        var anhDaiDienInput = document.getElementById('AnhDaiDien');
+
+        // Kiểm tra điều kiện hợp lệ
+        if (tenPhong.trim() === '') {
+            alert('Vui lòng nhập tên phòng');
+            return false; // Ngăn chặn việc submit form
+        }
+
+        if (giaPhong.trim() === '') {
+            alert('Vui lòng nhập giá phòng');
+            return false;
+        }
+
+        if (soNguoi.trim() === '') {
+            alert('Vui lòng nhập số người');
+            return false;
+        }
+
+        if (soGiuong.trim() === '') {
+            alert('Vui lòng nhập số giường');
+            return false;
+        }
+
+        if (kichThuocPhong.trim() === '') {
+            alert('Vui lòng nhập kích thước phòng');
+            return false;
+        }
+
+        if (moTa.trim() === '') {
+            alert('Vui lòng nhập mô tả');
+            return false;
+        }
+
+        // Kiểm tra xem input type file có chứa file ảnh không
+        if (anhDaiDienInput.files.length === 0) {
+            alert('Vui lòng chọn một file ảnh.');
+            return false;
+        }
+
+        // Nếu tất cả điều kiện hợp lệ, trả về true để cho phép submit form
+        return true;
+    }
+</script>
 

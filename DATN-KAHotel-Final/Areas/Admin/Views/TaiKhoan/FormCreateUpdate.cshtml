@@ -83,7 +83,7 @@
 <hr />
 
 <div class="row">
-    <form action="@ViewBag.action" method="post" enctype="multipart/form-data">
+    <form action="@ViewBag.action" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="col-md-4 left">

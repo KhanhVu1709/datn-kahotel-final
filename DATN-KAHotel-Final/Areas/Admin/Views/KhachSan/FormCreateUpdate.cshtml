@@ -296,30 +296,93 @@
         var isUpdate = url.includes("/admin/khachsan/update");
 
         if (isCreate) {
-            document.getElementById('saveBtn').addEventListener('click', function () {
-                this.form.action = '@Url.Action("CreatePost", "KhachSan")'; // Thay đổi action cho nút Lưu
+            document.getElementById('saveBtn').addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+
+                // Thực hiện các kiểm tra validation ở đây
+                var isValid = validateForm(); // Gọi hàm kiểm tra validation
+                if (!isValid) {
+                    // Hiển thị thông báo lỗi
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return; // Ngăn chặn submit form nếu validation không thành công
+                }
+
+                this.form.action = '@Url.Action("CreatePost", "KhachSan")';
                 this.form.submit();
             });
 
-            document.getElementById('saveAndAddRoomBtn').addEventListener('click', function () {
-                this.form.action = '@Url.Action("CreatePostAndAddRoom", "KhachSan")'; // Thay đổi action cho nút Lưu và Thêm Phòng
+            document.getElementById('saveAndAddRoomBtn').addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+
+                // Thực hiện các kiểm tra validation ở đây
+                var isValid = validateForm(); // Gọi hàm kiểm tra validation
+                if (!isValid) {
+                    // Hiển thị thông báo lỗi
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return; // Ngăn chặn submit form nếu validation không thành công
+                }
+
+                this.form.action = '@Url.Action("CreatePostAndAddRoom", "KhachSan")';
                 this.form.submit();
             });
         }
 
         if (isUpdate) {
-            document.getElementById('saveBtn').addEventListener('click', function () {
-                this.form.action = '@Url.Action("UpdatePost", "KhachSan")'; // Thay đổi action cho nút Cập nhật
+            document.getElementById('saveBtn').addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+
+                // Thực hiện các kiểm tra validation ở đây
+                var isValid = validateForm(); // Gọi hàm kiểm tra validation
+                if (!isValid) {
+                    // Hiển thị thông báo lỗi
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return; // Ngăn chặn submit form nếu validation không thành công
+                }
+
+                this.form.action = '@Url.Action("UpdatePost", "KhachSan")';
                 this.form.submit();
             });
 
-            document.getElementById('saveAndAddRoomBtn').addEventListener('click', function () {
-                this.form.action = '@Url.Action("UpdatePostAndAddRoom", "KhachSan")'; // Thay đổi action cho nút Lưu và Thêm Phòng
+            document.getElementById('saveAndAddRoomBtn').addEventListener('click', function (event) {
+                event.preventDefault(); // Ngăn chặn hành vi mặc định của nút submit
+
+                // Thực hiện các kiểm tra validation ở đây
+                var isValid = validateForm(); // Gọi hàm kiểm tra validation
+                if (!isValid) {
+                    // Hiển thị thông báo lỗi
+                    alert("Vui lòng nhập đầy đủ thông tin.");
+                    return; // Ngăn chặn submit form nếu validation không thành công
+                }
+
+                this.form.action = '@Url.Action("UpdatePostAndAddRoom", "KhachSan")';
                 this.form.submit();
             });
         }
     });
+
+    // Hàm kiểm tra validation của form
+    function validateForm() {
+        // Thực hiện các kiểm tra validation ở đây
+        // Trong ví dụ này, chúng ta kiểm tra xem các trường input có được điền đầy đủ hay không
+        var tenKhachSan = document.getElementById('TenKhachSan').value;
+        var diaChi = document.getElementById('DiaChi').value;
+        var gioiThieu = document.getElementById('GioiThieu').value;
+        var anhDaiDienInput = document.getElementById('AnhDaiDien');
+
+        if (tenKhachSan === '' || diaChi === '' || gioiThieu === '') {
+            return false; // Trả về false nếu có ít nhất một trường không hợp lệ
+        }
+
+        // Kiểm tra xem input type file có chứa file ảnh không
+        if (anhDaiDienInput.files.length === 0) {
+            alert('Vui lòng chọn một file ảnh.');
+            return false;
+        }
+
+        return true; // Trả về true nếu tất cả các trường hợp lệ
+    }
 </script>
+
 
 
 

@@ -97,7 +97,13 @@
                             <div class="dasboard-sidebar">
                                 <div class="dasboard-sidebar-content fl-wrap">
                                     <div class="dasboard-avatar">
-                                        <img src="@Url.Content("~/Images/taikhoan/"+tai_khoan.Anh)" alt="">
+                                        @if (tai_khoan.Anh != null) {
+                                            <img src="@Url.Content("~/Images/taikhoan/"+tai_khoan.Anh)" alt="">
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Images/taikhoan/avatar5.png" alt="">
+                                        }
                                     </div>
                                     <div class="dasboard-sidebar-item fl-wrap">
                                         <h3>
@@ -131,13 +137,13 @@
                                 <div class="dasboard-menu-btn color3-bg">Dashboard Menu <i class="fal fa-bars"></i></div>
                                 <ul class="dasboard-menu-wrap">
                                     <li>
-                                        <a href="dashboard.html"><i class="far fa-user"></i>Profile</a>
+                                        <a href="/accountdetail/thongtintaikhoan?id=@tai_khoan.Id"><i class="far fa-user"></i>Hồ sơ</a>
                                         <ul>
-                                            <li><a href="dashboard-myprofile.html">Edit profile</a></li>
-                                            <li><a href="dashboard-password.html">Change Password</a></li>
+                                            <li><a href="/accountdetail/thongtintaikhoan?id=@tai_khoan.Id">Chỉnh sửa trang cá nhân</a></li>
+                                            <li><a href="/accountdetail/doimatkhau?id=@tai_khoan.Id">Thay đổi mật khẩu</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="dashboard-messages.html"><i class="far fa-envelope"></i> Messages <span>3</span></a></li>
+                                    @*<li><a href="dashboard-messages.html"><i class="far fa-envelope"></i> Messages <span>3</span></a></li>
                                     <li>
                                         <a href="dashboard-listing-table.html"><i class="far fa-th-list"></i> My listigs  </a>
                                         <ul>
@@ -145,9 +151,9 @@
                                             <li><a href="#">Pending</a><span>2</span></li>
                                             <li><a href="#">Expire</a><span>3</span></li>
                                         </ul>
-                                    </li>
-                                    <li><a href="dashboard-bookings.html"> <i class="far fa-calendar-check"></i> Bookings <span>2</span></a></li>
-                                    <li><a href="dashboard-review.html" class="user-profile-act"><i class="far fa-comments"></i> Reviews </a></li>
+                                    </li>*@
+                                    <li><a href="/accountdetail/lichsudatphong?id=@tai_khoan.Id" class="user-profile-act"> <i class="far fa-calendar-check"></i> Lịch sử đặt phòng</a></li>
+                                    @*<li><a href="dashboard-review.html" class="user-profile-act"><i class="far fa-comments"></i> Reviews </a></li>*@
                                 </ul>
                             </div>
                             <!--dasboard-menu end-->

@@ -12,7 +12,7 @@ build_property.RootNamespace = DATN_KAHotel_Final
 build_property.ProjectDir = E:\ASPNET\DATN-KAHotel-Final\DATN-KAHotel-Final\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
-build_property.GenerateRazorMetadataSourceChecksumAttributes = 
+build_property.GenerateRazorMetadataSourceChecksumAttributes = true
 build_property.MSBuildProjectDirectory = E:\ASPNET\DATN-KAHotel-Final\DATN-KAHotel-Final
 build_property._RazorSourceGeneratorDebug = 
 

@@ -17,7 +17,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
         {
             int pageSize = 10;
             int pageNumber = page == null || page < 0 ? 1 : page.Value;
-            var listPhong = db.Phongs.OrderBy(item => item.Id).ToList();
+            var listPhong = db.Phongs.ToList().Where(x => (bool)!x.IsDelete).OrderBy(item => item.Id).ToList();
             PagedList<Phong> list = new PagedList<Phong>(listPhong, pageNumber, pageSize);
             return View(list);
         }

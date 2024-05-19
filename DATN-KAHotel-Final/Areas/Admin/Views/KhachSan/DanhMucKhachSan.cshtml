@@ -133,7 +133,7 @@
 </table>
 
 @{
-    string baseUrl = "admin/khachsan/danhmuckhachsan";
+    string baseUrl = "";
 }
 
 <div class="pagination">
@@ -178,7 +178,7 @@
         @if (Model.HasNextPage)
         {
             <li class="page-item">
-                <a class="page-link" href="@($"{baseUrl}?page={Model.PageNumber + 1}")">Next</a>
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageNumber + 1}")">Tiếp</a>
             </li>
         }
     </ul>

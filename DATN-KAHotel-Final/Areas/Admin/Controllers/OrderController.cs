@@ -22,6 +22,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
             var linq = (from t in db.TaiKhoans
                         join dp in db.DatPhongs on t.Id equals dp.IdTaiKhoan
                         join tt in db.TrangThaiDons on dp.IdTrangThai equals tt.Id
+                        orderby dp.Id descending
                         select new ChiTietGiaoDich
                         {
                             IdHoaDon = dp.Id,
