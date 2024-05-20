@@ -1,0 +1,187 @@
+﻿@using X.PagedList.Mvc.Core
+@using DATN_KAHotel_Final.Models
+@model X.PagedList.IPagedList<TienNghi>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "DanhMucTienNghi";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@functions {
+    QlksContext db = new QlksContext();
+
+    public string getTinhThanhById(int? idTinhThanh)
+    {
+        var tinh = db.TinhThanhs.FirstOrDefault(t => t.Id == idTinhThanh);
+        return tinh.TenTinh;
+    }
+
+    // lấy ra tên khách sạn theo id phòng
+    public string getTenKsById(int? idP)
+    {
+        var tenKhachSan = db.KhachSans
+                        .Join(db.Phongs, k => k.Id, p => p.IdKhachSan, (k, p) => new { KhachSan = k, Phong = p })
+                        .Where(x => x.Phong.Id == idP)
+                        .Select(x => x.KhachSan.TenKhachSan)
+                        .FirstOrDefault();
+        return tenKhachSan;
+    }
+}
+
+<style>
+    td a {
+        font-size: 20px;
+    }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding-top: 16px;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    /* Định dạng cho bảng */
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: monospace;
+    }
+
+    /* Định dạng cho các ô */
+    .table, th, td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid black;
+        text-align: center;
+    }
+
+        /* Định dạng cho dòng chẵn */
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Định dạng khi di chuột qua */
+        .table tr:hover {
+            background-color: #ddd;
+        }
+
+    /* Định dạng cho dropdown select */
+    .trangThaiSelect {
+        padding: 8px;
+        border-radius: 4px;
+    }
+
+    table p {
+        margin-top: 16px !important;
+        text-align: center;
+    }
+</style>
+
+
+<h1>Danh mục tiện nghi</h1>
+
+<p>
+    <a href="./create" class="btn btn-primary">Thêm</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                STT
+            </th>
+            <th>
+                Tên tiện nghi
+            </th>
+            <th>
+                Icon tiện nghi
+            </th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 0;
+            string cla = "table-success";
+        }
+        @foreach (var item in Model)
+        {
+                cla = "table-success";
+                i += 1;
+                if (i % 2 == 0)
+                {
+                    cla = "table-warning";
+                }
+                <tr class="@cla">
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TenTienNghi)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IconTienNghi)
+                    </td>
+                    <td>
+                        <a href="/admin/tiennghi/update?idTienNghi=@item.Id"><i class="bx bx-edit"></i></a> |
+                        <a href="/admin/tiennghi/delete?idTienNghi=@item.Id"><i class="bx bx-trash"></i></a>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
+
+@{
+    string baseUrl = "/admin/tiennghi/danhmuctiennghi";
+}
+
+<div class="pagination">
+    <ul style="display: flex; justify-content: center;">
+        @if (Model.HasPreviousPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageNumber - 1}")">Trở về</a>
+            </li>
+        }
+
+        @if (Model.PageNumber > 3)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page=1")">1</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+        }
+
+        @for (int y = Model.PageNumber - 2; y <= Model.PageNumber + 2; y++)
+        {
+            if (y > 0 && y <= Model.PageCount)
+            {
+                <li class="page-item @(y == Model.PageNumber ? "active" : "")">
+                    <a class="page-link" href="@($"{baseUrl}?page={y}")">@y</a>
+                </li>
+            }
+        }
+
+        @if (Model.PageNumber < Model.PageCount - 2)
+        {
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageCount}")">@Model.PageCount</a>
+            </li>
+        }
+
+        @if (Model.HasNextPage)
+        {
+            <li class="page-item">
+                <a class="page-link" href="@($"{baseUrl}?page={Model.PageNumber + 1}")">Tiếp</a>
+            </li>
+        }
+    </ul>
+</div>

@@ -64,6 +64,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGFpS2hvYW5cUGhhblF1eWVuVGFpS2hvYW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Areas/Admin/Views/TienNghi/DanhMucTienNghi.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGllbk5naGlcRGFuaE11Y1RpZW5OZ2hpLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Areas/Admin/Views/TienNghi/FormCreateUpdate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGllbk5naGlcRm9ybUNyZWF0ZVVwZGF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/AccountDetail/DoiMatKhau.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudERldGFpbFxEb2lNYXRLaGF1LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
