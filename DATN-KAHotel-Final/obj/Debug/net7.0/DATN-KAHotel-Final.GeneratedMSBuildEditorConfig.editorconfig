@@ -112,6 +112,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhvbmdcQ2hpVGlldFBob25nLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Phong/PaymentFail.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhvbmdcUGF5bWVudEZhaWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Phong/PaymentSuccess.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhvbmdcUGF5bWVudFN1Y2Nlc3MuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/ASPNET/DATN-KAHotel-Final/DATN-KAHotel-Final/Views/Phong/TimKiemPhong.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUGhvbmdcVGltS2llbVBob25nLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

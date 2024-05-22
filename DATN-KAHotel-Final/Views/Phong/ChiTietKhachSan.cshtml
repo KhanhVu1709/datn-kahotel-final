@@ -393,7 +393,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                @*<div class="col-md-5">
                                     <!--  list-single-hero-details-->
                                     <div class="list-single-hero-details fl-wrap">
                                         <!--  list-single-hero-rating-->
@@ -453,10 +453,10 @@
                                         <!--  list-single-hero-links end-->
                                     </div>
                                     <!--  list-single-hero-details  end-->
-                                </div>
+                                </div>*@
                             </div>
                             <div class="breadcrumbs-hero-buttom fl-wrap">
-                                <div class="breadcrumbs"><a href="#">Home</a><a href="#">Listings</a><a href="#">New York</a><span>Listing Single</span></div>
+                                @*<div class="breadcrumbs"><a href="#">Home</a><a href="#">Listings</a><a href="#">New York</a><span>Listing Single</span></div>*@
                                 <div class="list-single-hero-price">1 Đêm<span>@string.Format("{0:N0} VNĐ", @getGiaTrungBinhKS(Model.Id))</span></div>
                             </div>
                         </div>
@@ -586,9 +586,9 @@
                                         <div class="list-single-main-item-title fl-wrap">
                                             <h3>Về khách sạn </h3>
                                         </div>
-                                        <p>Praesent eros turpis, commodo vel justo at, pulvinar mollis eros. Mauris aliquet eu quam id ornare. Morbi ac quam enim. Cras vitae nulla condimentum, semper dolor non, faucibus dolor. Vivamus adipiscing eros quis orci fringilla, sed pretium lectus viverra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec nec velit non odio aliquam suscipit. Sed non neque faucibus, condimentum lectus at, accumsan enim. Fusce pretium egestas cursus. Etiam consectetur, orci vel rutrum volutpat, odio odio pretium nisiodo tellus libero et urna. Sed commodo ipsum ligula, id volutpat risus vehicula in. Pellentesque non massa eu nibh posuere bibendum non sed enim. Maecenas lobortis nulla sem, vel egestas  . </p>
-                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat .</p>
-                                        <a href="https://vimeo.com/70851162" class="btn flat-btn color-bg big-btn float-btn image-popup">Video Presentation <i class="fal fa-play"></i></a>
+                                        <p>@Model.GioiThieu</p>
+                                        @*<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat .</p>*@
+                                        @*<a href="https://vimeo.com/70851162" class="btn flat-btn color-bg big-btn float-btn image-popup">Video Presentation <i class="fal fa-play"></i></a>*@
                                     </div>
                                     <!--   list-single-main-item end -->
                                     <!--   list-single-main-item -->
@@ -605,7 +605,7 @@
                                             </ul>
                                         </div>
                                         <span class="fw-separator"></span>
-                                        <div class="list-single-main-item-title no-dec-title fl-wrap">
+                                        @*<div class="list-single-main-item-title no-dec-title fl-wrap">
                                             <h3>Tags</h3>
                                         </div>
                                         <div class="list-single-tags tags-stylwrap">
@@ -615,11 +615,11 @@
                                             <a href="#">Spa</a>
                                             <a href="#">Nhà hàng</a>
                                             <a href="#">Bãi đậu xe</a>
-                                        </div>
+                                        </div>*@
                                     </div>
                                     <!--   list-single-main-item end -->
                                     <!-- accordion-->
-                                    <div class="accordion mar-top">
+                                    @*<div class="accordion mar-top">
                                         <a class="toggle act-accordion" href="#"> Tùy chọn chi tiết   <span></span></a>
                                         <div class="accordion-inner visible">
                                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.</p>
@@ -632,7 +632,7 @@
                                         <div class="accordion-inner">
                                             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in pulvinar neque. Nulla finibus lobortis pulvinar. Donec a consectetur nulla. Nulla posuere sapien vitae lectus suscipit, et pulvinar nisi tincidunt. Aliquam erat volutpat. Curabitur convallis fringilla diam sed aliquam. Sed tempor iaculis massa faucibus feugiat. In fermentum facilisis massa, a consequat purus viverra.</p>
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <!-- accordion end -->
                                     <!--   list-single-main-item -->
                                     <div class="list-single-main-item fl-wrap" id="sec4">
@@ -994,7 +994,7 @@
                                     </div>
                                     <!--box-widget-item end -->
                                     <!--box-widget-item -->
-                                    <div class="box-widget-item fl-wrap">
+                                    @*<div class="box-widget-item fl-wrap">
                                         <div class="box-widget">
                                             <div class="box-widget-content">
                                                 <div class="box-widget-item-header">
@@ -1125,7 +1125,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>*@
                                     <!--box-widget-item end -->
                                 </div>
                                 <!--box-widget-wrap end -->

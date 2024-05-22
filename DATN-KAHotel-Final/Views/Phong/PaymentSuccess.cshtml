@@ -1,0 +1,257 @@
+﻿@{
+    Layout = null;
+}
+
+@functions {
+    QlksContext db = new QlksContext();
+
+    public List<TinhThanh> getAllTinhThanh()
+    {
+        var list = db.TinhThanhs.ToList();
+        return list;
+    }
+
+    public int getCountKhachSanById(int idTinh)
+    {
+        var query = from t in db.TinhThanhs
+                    join k in db.KhachSans on t.Id equals k.IdTinhThanh
+                    where t.Id == idTinh && k.IsDelete == false
+                    group k by t.Id into g
+                    select g.Count();
+
+        return query.FirstOrDefault();
+    }
+
+    public List<TinhThanh> getTinhThanhOrderByKhachSan()
+    {
+        var tinhThanhs = db.TinhThanhs
+                            .Select(t => new
+                            {
+                                TinhThanh = t,
+                                SoLuongKhachSan = t.KhachSans.Count()
+                            })
+                            .OrderByDescending(x => x.SoLuongKhachSan)
+                            .Take(5)
+                            .ToList();
+
+        return tinhThanhs.Select(x => x.TinhThanh).ToList();
+    }
+}
+
+<!DOCTYPE HTML>
+<html lang="en">
+
+<!-- Mirrored from easybook.kwst.net/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:12:09 GMT -->
+<head>
+    <!--=============== basic  ===============-->
+    <meta charset="UTF-8">
+    <title>KA Hotel Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="index, follow" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <!--=============== css  ===============-->
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/reset.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/plugins.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/style.css">
+    <link type="text/css" rel="stylesheet" href="../LayoutHotel/css/color.css">
+    <style>
+        body {
+            background-color: #544537;
+        }
+
+        .main-header, .footer-inner {
+            background-color: #544537;
+        }
+
+        .suggestions-list {
+            position: absolute;
+            background-color: #fff;
+            border-top: 1px solid #ccc;
+            list-style-type: none;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            top: 100%;
+            border-radius: 2px;
+        }
+
+            .suggestions-list li {
+                padding: 15px;
+                cursor: pointer;
+                text-align: left;
+                height: 100%;
+                border-bottom: 1px solid #ccc;
+            }
+
+                .suggestions-list li i {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    color: blue;
+                }
+
+                .suggestions-list li:hover {
+                    background-color: #F9B90F;
+                }
+    </style>
+    <!--=============== favicons ===============-->
+    <link rel="shortcut icon" href="../LayoutHotel/images/favicon.ico">
+</head>
+<body>
+    <!--loader-->
+    <div class="loader-wrap">
+        <div class="pin">
+            <div class="pulse"></div>
+        </div>
+    </div>
+    <!--loader end-->
+    <!-- Main  -->
+    <div id="main">
+        <!-- header-->
+        @await Html.PartialAsync("_PartialHeader")
+        <!--  header end -->
+        <!--  wrapper  -->
+        <div id="wrapper">
+            <!-- content-->
+            <div class="content">
+                <!--section -->
+                <section class="hero-section" data-scrollax-parent="true" id="sec1">
+                    <div class="hero-parallax">
+                        <div class="bg" data-bg="../LayoutHotel/images/bg/22.jpg" data-scrollax="properties: { translateY: '200px' }"></div>
+                        <div class="overlay op7"></div>
+                    </div>
+                    <div class="hero-section-wrap fl-wrap">
+                        <div class="container">
+                            <div class="home-intro">
+                                <div class="section-title-separator"><span></span></div>
+                                <h2>Cảm ơn đã tin tưởng và sử dụng dịch vụ!!</h2>
+                                <p style="color: white;">Chúc bạn và gia đình có chuyến du lịch thật thoải mái!!</p>
+                                <span class="section-separator"></span>
+                                <a href="/home/index" style="color: white;">Về trang chủ</a>
+                                @*<h3>Hãy bắt đầu khám phá thế giới cùng KA Hotel</h3>*@
+                            </div>
+                            @if (TempData["ErrorMessage"] != null)
+                            {
+                                <script>
+                                    window.onload = function () {
+                                        alert('@Html.Raw(TempData["ErrorMessage"])');
+                                    };
+                                </script>
+                            }
+                        </div>
+                    </div>
+                    <div class="header-sec-link">
+                        <div class="container"><a href="#sec2" class="custom-scroll-link color-bg"><i class="fal fa-angle-double-down"></i></a></div>
+                    </div>
+                </section>
+                <!-- section end -->
+                <!--section -->
+                <!-- content end-->
+            </div>
+            <!--wrapper end -->
+            <!--footer -->
+            @await Html.PartialAsync("_PartialFooter")
+            <!--footer end -->
+            <!--map-modal -->
+            <div class="map-modal-wrap">
+                <div class="map-modal-wrap-overlay"></div>
+                <div class="map-modal-item">
+                    <div class="map-modal-container fl-wrap">
+                        <div class="map-modal fl-wrap">
+                            <div id="singleMap" data-latitude="40.7" data-longitude="-73.1"></div>
+                        </div>
+                        <h3><i class="fal fa-location-arrow"></i><a href="#">Hotel Title</a></h3>
+                        <input id="pac-input" class="controls fl-wrap controls-mapwn" type="text" placeholder="What Nearby ?   Bar , Gym , Restaurant ">
+                        <div class="map-modal-close"><i class="fal fa-times"></i></div>
+                    </div>
+                </div>
+            </div>
+            <!--map-modal end -->
+            <!--register form -->
+            <!--register form end -->
+            <a class="to-top"><i class="fas fa-caret-up"></i></a>
+        </div>
+        <!-- Main end -->
+        <!--=============== scripts  ===============-->
+        <script type="text/javascript" src="../LayoutHotel/js/jquery.min.js"></script>
+        <script type="text/javascript" src="../LayoutHotel/js/plugins.js"></script>
+        <script type="text/javascript" src="../LayoutHotel/js/scripts.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOYdeXNSuANfFSi3EY9-NaqxT_MHxHX3c;libraries=places&amp;callback=initAutocomplete"></script>
+        <script type="text/javascript" src="../LayoutHotel/js/map-single.js"></script>
+        <script>
+            $(document).ready(function () {
+                $("#searchMain").on("click", function () {
+                    // Lấy giá trị từ các trường input
+                    var date = $("input[name='main-input-search']").val();
+                    var selectCity = $("input[name='main-input-city']").val();
+                    var selectedCityId = $("#selectedCityId").val();
+                    if (date != "") {
+                        var dateArray = date.split(" - ");
+                        var startDate = dateArray[0];
+                        var endDate = dateArray[1];
+                        // Gửi dữ liệu đến controller
+                        $.ajax({
+                            type: "GET",
+                            url: "/phong/timkiemphong",
+                            data: {
+                                start: startDate,
+                                end: endDate,
+                                city: selectedCityId
+                            },
+                            success: function (response) {
+                                // Xử lý kết quả thành công
+                                window.location.href = "/phong/timkiemphong?IdTinh=" + selectedCityId + "&ngayDen=" + startDate + "&ngayDi=" + endDate;
+                            },
+                            error: function (error) {
+                                console.log("Error:", error);
+                            }
+                        });
+                    }
+                    else {
+                        alert("Vui lòng chọn ngày check-in và check-out");
+                    }
+                });
+            });
+
+            $('#autocompleteid2').keyup(function () {
+                var query = $(this).val();
+                if (query.length >= 1) {
+                    $.ajax({
+                        url: '/phong/GoiYTimKiem',
+                        type: 'GET',
+                        data: { query: query },
+                        success: function (data) {
+                            var suggestionsList = $('#suggestionsList');
+                            suggestionsList.empty();
+                            $.each(data, function (index, value) {
+                                suggestionsList.append('<li data-id=' + value.id + '> <i class="fal fa-map-marker-alt"></i>' + value.tenTinh + '</li>');
+                            });
+                            suggestionsList.show(); // Hiển thị danh sách gợi ý
+                        }
+                    });
+                }
+            });
+
+            // Bổ sung sự kiện click vào body để ẩn danh sách gợi ý khi click bên ngoài input và danh sách gợi ý
+            $('body').on('click', function (e) {
+                if (!$(e.target).closest('.main-search-input-item').length) {
+                    $('#suggestionsList').hide();
+                }
+            });
+
+            // Bổ sung sự kiện click vào mỗi item của danh sách gợi ý để điền giá trị vào input và ẩn danh sách gợi ý
+            $('#suggestionsList').on('click', 'li', function () {
+                var selectedSuggestion = $(this).text();
+                var selectedId = $(this).data('id');
+                $('#selectedCityId').val(selectedId);
+                $('#autocompleteid2').val(selectedSuggestion);
+                $('#suggestionsList').hide();
+            });
+
+        </script>
+</body>
+
+<!-- Mirrored from easybook.kwst.net/ by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 25 Jan 2024 09:14:08 GMT -->
+</html>

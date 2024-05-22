@@ -471,7 +471,7 @@ namespace DATN_KAHotel_Final.Controllers
                 HttpContext.Session.Remove("ket_thuc");
 
                 Cart.CartDestroy(HttpContext.Session);
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("PaymentSuccess", "Phong");
             }
 
             return View();
@@ -484,25 +484,25 @@ namespace DATN_KAHotel_Final.Controllers
 
         public IActionResult PaymentSuccess()
         {
-            // Lấy giá trị id_datphong từ TempData
-            int? id_datphong = TempData["IdDatPhong"] as int?;
+            //// Lấy giá trị id_datphong từ TempData
+            //int? id_datphong = TempData["IdDatPhong"] as int?;
 
-            if (id_datphong.HasValue)
-            {
-                // Đã lấy được giá trị, có thể sử dụng nó trong trang "paymentsuccess"
-                ViewBag.IdDatPhong = id_datphong;
+            //if (id_datphong.HasValue)
+            //{
+            //    // Đã lấy được giá trị, có thể sử dụng nó trong trang "paymentsuccess"
+            //    ViewBag.IdDatPhong = id_datphong;
 
-                List<Item> cart = Cart.GetCart(HttpContext.Session);
-                if (cart != null)
-                {
-                    ViewBag.Cart = cart;
-                }
+            //    List<Item> cart = Cart.GetCart(HttpContext.Session);
+            //    if (cart != null)
+            //    {
+            //        ViewBag.Cart = cart;
+            //    }
 
-                return View();
-            }
+            //    return View();
+            //}
 
-            // Xử lý khi không có thông tin đơn đặt phòng
-            return RedirectToAction("Index");
+            //// Xử lý khi không có thông tin đơn đặt phòng
+            return View();
         }
         #endregion
 
