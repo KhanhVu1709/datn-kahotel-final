@@ -58,7 +58,7 @@ namespace DATN_KAHotel_Final.Models
                 double total = 0;
                 foreach (var item in items_cart)
                 {
-                    total += Convert.ToDouble(item.phong.GiaPhong * soNgay);
+                    total += Convert.ToDouble((item.phong.GiaPhong * soNgay) + (item.phong.GiaPhong * soNgay * 0.1));
                 }
                 return total;
             }

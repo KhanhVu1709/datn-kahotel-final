@@ -14,6 +14,23 @@
 @functions {
     QlksContext db = new QlksContext();
 
+    public string ThueVaPhi(DateTime batDau, DateTime ketThuc, double? giaPhong)
+    {
+        if (giaPhong.HasValue)
+        {
+            // Tính số ngày ở qua đêm
+            int soNgayOQuaDem = (ketThuc.Date - batDau.Date).Days;
+
+            // Tính tổng tiền
+            double tienThue = giaPhong.Value * soNgayOQuaDem * 0.1;
+
+            // Định dạng và trả về chuỗi kết quả
+            return string.Format("{0:N0} VNĐ", tienThue);
+        }
+        // Trả về chuỗi rỗng nếu giá phòng là null
+        return "";
+    }
+
     public string CalculateTotalAmount(DateTime batDau, DateTime ketThuc, double? giaPhong)
     {
         if (giaPhong.HasValue)
@@ -22,7 +39,7 @@
             int soNgayOQuaDem = (ketThuc.Date - batDau.Date).Days;
 
             // Tính tổng tiền
-            double tongTien = giaPhong.Value * soNgayOQuaDem;
+            double tongTien = (giaPhong.Value * soNgayOQuaDem) + (giaPhong.Value * soNgayOQuaDem * 0.1);
 
             // Định dạng và trả về chuỗi kết quả
             return string.Format("{0:N0} VNĐ ({1} ngày ở qua đêm)", tongTien, soNgayOQuaDem);
@@ -35,6 +52,13 @@
     {
         TaiKhoan tk = db.TaiKhoans.FirstOrDefault(u => u.TenDangNhap == ten_dang_nhap);
         return tk;
+    }
+
+    // lấy ra đối tượng khách sạn của phòng đang đặt
+    public KhachSan getKhachSanById(int? idKS)
+    {
+        KhachSan ks = db.KhachSans.FirstOrDefault(x => x.Id == idKS);
+        return ks;
     }
 }
 
@@ -152,24 +176,24 @@
                                                             <div class="row">
                                                                 <div class="col-sm-6">
                                                                     <label>Họ <i class="far fa-user"></i></label>
-                                                                    <input type="text" name="ho" placeholder="Họ" value="" />
+                                                                    <input type="text" name="ho" placeholder="Họ" value="" required/>
                                                                 </div>
                                                                 <div class="col-sm-6">
                                                                     <label>Tên <i class="far fa-user"></i></label>
-                                                                    <input type="text" name="ten" placeholder="Tên" value="" />
+                                                                    <input type="text" name="ten" placeholder="Tên" value="" required/>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-6">
                                                                     <label>Địa chỉ email<i class="far fa-envelope"></i>  </label>
-                                                                    <input type="text" name="email" placeholder="yourmail@domain.com" value="" />
+                                                                    <input type="text" name="email" placeholder="yourmail@domain.com" value="" required/>
                                                                 </div>
                                                                 <div class="col-sm-6">
                                                                     <label>Số điện thoại<i class="far fa-phone"></i>  </label>
-                                                                    <input type="text" name="phone" placeholder="01123456789" value="" />
+                                                                    <input type="text" name="phone" placeholder="01123456789" value="" required/>
                                                                 </div>
                                                             </div>
-                                                            <div class="log-massage">Khách hàng hiện tại? <a href="#" class="modal-open">Nhấn vào đây để đăng nhập</a></div>
+                                                            @*<div class="log-massage">Khách hàng hiện tại? <a href="#" class="modal-open">Nhấn vào đây để đăng nhập</a></div>
                                                             <div class="log-separator fl-wrap"><span>or</span></div>
                                                             <div class="soc-log fl-wrap">
                                                                 <p>Để đăng nhập hoặc đăng ký nhanh hơn, hãy sử dụng tài khoản xã hội của bạn.</p>
@@ -178,7 +202,7 @@
                                                             <div class="filter-tags">
                                                                 <input id="check-a" type="checkbox" name="check">
                                                                 <label for="check-a">Bằng cách tiếp tục, bạn đồng ý với<a href="#" target="_blank">Các điều khoản và điều kiện</a>.</label>
-                                                            </div>
+                                                            </div>*@
                                                             <span class="fw-separator"></span>
                                                             <a href="#" class="next-form action-button btn no-shdow-btn color-bg">Địa chỉ thanh toán <i class="fal fa-angle-right"></i></a>
                                                         </fieldset>
@@ -189,23 +213,23 @@
                                                             <div class="row">
                                                                 <div class="col-sm-12">
                                                                     <label>Thành phố <i class="fal fa-globe-asia"></i></label>
-                                                                    <input type="text" name="thanhpho" placeholder="Thành phố của bạn" value="" />
+                                                                    <input type="text" name="thanhpho" placeholder="Thành phố của bạn" value="" required/>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-12">
                                                                     <label>Đường phố <i class="fal fa-road"></i> </label>
-                                                                    <input type="text" name="duongpho" placeholder="Đường phố của bạn" value="" />
+                                                                    <input type="text" name="duongpho" placeholder="Đường phố của bạn" value="" required/>
                                                                 </div>
                                                             </div>
                                                             <div class="row">
                                                                 <div class="col-sm-8">
                                                                     <label>Tình trạng<i class="fal fa-street-view"></i></label>
-                                                                    <input type="text" name="tinhtrang" placeholder="Tình trạng của bạn" value="" />
+                                                                    <input type="text" name="tinhtrang" placeholder="Tình trạng của bạn" value="" required/>
                                                                 </div>
                                                                 <div class="col-sm-4">
                                                                     <label>Mã bưu điện<i class="fal fa-barcode"></i> </label>
-                                                                    <input type="text" name="mabuudien" placeholder="123456" value="" />
+                                                                    <input type="text" name="mabuudien" placeholder="123456" value="" required/>
                                                                 </div>
                                                             </div>
                                                             <div class="list-single-main-item-title fl-wrap">
@@ -225,7 +249,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="box-widget-item-header">
-                                        <h3> Your  cart</h3>
+                                        <h3> Thông tin đơn đặt</h3>
                                     </div>
                                     <!--cart-details  -->
                                     <div class="cart-details fl-wrap">
@@ -234,21 +258,21 @@
                                             <a href="#" class="widget-posts-img"><img src="@Url.Content("~/Images/phong/"+item.phong.AnhDaiDien)" class="respimg" alt=""></a>
                                             <div class="widget-posts-descr">
                                                 <a href="#" title="">@item.phong.TenPhong</a>
-                                                <div class="listing-rating card-popup-rainingvis" data-starrating2="5"></div>
-                                                <div class="geodir-category-location fl-wrap"><a href="#"><i class="fas fa-map-marker-alt"></i> 40 JOURNAL SQUARE PLAZA, NJ, US</a></div>
+                                                <div class="listing-rating card-popup-rainingvis" data-starrating2="@getKhachSanById(item.phong.IdKhachSan).SoSao"></div>
+                                                <div class="geodir-category-location fl-wrap"><a href="#"><i class="fas fa-map-marker-alt"></i> @getKhachSanById(item.phong.IdKhachSan).DiaChi</a></div>
                                             </div>
                                         </div>
                                         <!--cart-details_header end-->
                                         <!--ccart-details_text-->
                                         <div class="cart-details_text">
                                             <ul class="cart_list">
-                                                <li>Loại phòng <span>Standard Family Room <strong>$81</strong></span></li>
+                                                @*<li>Loại phòng <span>Standard Family Room <strong>$81</strong></span></li>*@
                                                 <li>Từ ngày <span>@Context.Session.GetString("bat_dau")</span></li>
                                                 <li>Đến ngày <span>@Context.Session.GetString("ket_thuc")</span></li>
                                                 <li>Ngày ở<span>@soNgay </span></li>
-                                                <li>Người lớn <span>2</span></li>
-                                                <li>Trẻ em <span>1 <strong>-10%</strong></span></li>
-                                                <li>Thuế và phí <span><strong>120,000 VNĐ</strong></span></li>
+                                                @*<li>Người lớn <span>2</span></li>*@
+                                                @*<li>Trẻ em <span>1 <strong>-10%</strong></span></li>*@
+                                                <li>Thuế và phí <span><strong>@ThueVaPhi(batDau, ketThuc, item.phong.GiaPhong)</strong></span></li>
                                             </ul>
                                         </div>
                                         <!--cart-details_text end -->

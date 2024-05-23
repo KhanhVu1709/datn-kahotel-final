@@ -11,5 +11,7 @@ namespace DATN_KAHotel_Final.ViewModels
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         [Compare("MatKhau", ErrorMessage = "Mật khẩu và xác nhận mật khẩu không trùng khớp")]
         public string ConfirmMatKhau { get; set; }
+        public string? HoTen { get; set; }
+        public string? Email { get; set; }
     }
 }

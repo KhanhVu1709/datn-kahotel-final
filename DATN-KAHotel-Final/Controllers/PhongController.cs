@@ -206,12 +206,19 @@ namespace DATN_KAHotel_Final.Controllers
         }
 
         #region Thanhtoan
+        // gửi mail khi thanh toán thành công
         private void SendConfirmationEmail(DatPhong bookingModel, string customerEmail, string paymentMethod)
         {
             string subject;
             string paymentInfo;
             var start = HttpContext.Session.GetString("bat_dau");
             var end = HttpContext.Session.GetString("ket_thuc");
+
+            DateTime bat_dau = Convert.ToDateTime(start);
+            DateTime ket_thuc = Convert.ToDateTime(end);
+            TimeSpan khoang_cach = ket_thuc - bat_dau;
+            int soNgay = (int)khoang_cach.TotalDays;
+
             // Tạo nội dung email
             var tenks = (from ks in db.KhachSans
                          join p in db.Phongs on ks.Id equals p.IdKhachSan
@@ -248,7 +255,7 @@ namespace DATN_KAHotel_Final.Controllers
             }
             else
             {
-                strSanPham += $"<td>{data.Sum(x => x.phong.GiaPhong)}</td>";
+                strSanPham += $"<td>{data.Sum(x => (x.phong.GiaPhong * soNgay) + (x.phong.GiaPhong * soNgay * 0.1))}</td>";
             }
             strSanPham += "</tr>";
             strSanPham += "</tbody></table>";
@@ -367,7 +374,7 @@ namespace DATN_KAHotel_Final.Controllers
                 foreach (var line in cart)
                 {
                     var id_phong = line.phong.Id;
-                    var don_gia = line.phong.GiaPhong * soNgay;
+                    var don_gia = (line.phong.GiaPhong * soNgay) + (line.phong.GiaPhong * soNgay * 0.1);
                     var id_trang_thai = 1;
 
                     dat_phong.IdPhong = id_phong;
@@ -431,7 +438,7 @@ namespace DATN_KAHotel_Final.Controllers
                 foreach (var line in cart)
                 {
                     var id_phong = line.phong.Id;
-                    var don_gia = line.phong.GiaPhong * soNgay;
+                    var don_gia = (line.phong.GiaPhong * soNgay) + (line.phong.GiaPhong * soNgay * 0.1);
                     var id_trang_thai = 1;
 
                     dat_phong.IdPhong = id_phong;

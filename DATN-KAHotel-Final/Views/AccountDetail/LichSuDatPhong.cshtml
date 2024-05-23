@@ -92,7 +92,7 @@
                     <div class="wave-bg wave-bg2"></div>
                     <div class="container">
                         <div class="dasboard-wrap fl-wrap">
-                            <div class="dasboard-breadcrumbs breadcrumbs"><a href="#">Home</a><a href="#">Dashboard</a><span>Profile page</span></div>
+                            <div class="dasboard-breadcrumbs breadcrumbs"><a href="/home/index">Trang chủ</a><span>Lịch sử đặt phòng</span></div>
                             <!--dasboard-sidebar-->
                             <div class="dasboard-sidebar">
                                 <div class="dasboard-sidebar-content fl-wrap">
@@ -174,12 +174,13 @@
                         <!--dasboard-wrap-->
                         <div class="dasboard-wrap fl-wrap">
                             <!-- dashboard-content-->
-                            @foreach (var item in Model)
-                            {
+                            
                                 <div class="dashboard-list-box fl-wrap">
                                     <div class="dashboard-header fl-wrap">
                                         <h3>Lịch sử đặt phòng</h3>
                                     </div>
+                                @foreach (var item in Model)
+                                {
                                     <!-- dashboard-list end-->
                                     <div class="dashboard-list">
                                         <div class="dashboard-message">
@@ -239,8 +240,8 @@
                                         </div>
                                     </div>
                                     <!-- dashboard-list end-->
+                                }
                                 </div>
-                            }
                             <!-- dashboard-list-box end-->
                             <!-- pagination-->
                             @*<div class="pagination">

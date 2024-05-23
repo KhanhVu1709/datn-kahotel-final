@@ -135,6 +135,8 @@ namespace DATN_KAHotel_Final.Controllers
                     user.TenDangNhap = rvm.TenDangNhap;
                     user.MatKhau = hashedPassword;
                     user.TrangThai = true;
+                    user.HoTen = rvm.HoTen;
+                    user.Email = rvm.Email;
                     user.Anh = "avatar5.png";
                     user.IsDelete = false;
                     db.TaiKhoans.Add(user);
