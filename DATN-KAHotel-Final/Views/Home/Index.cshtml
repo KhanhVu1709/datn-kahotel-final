@@ -122,86 +122,90 @@
 
 @foreach(var item in Model.Take(5))
 {
-    <div class="slick-slide-item">
-        <!-- listing-item  -->
-        <div class="listing-item">
-            <article class="geodir-category-listing fl-wrap">
-                <div class="geodir-category-img">
-                    <a href="/phong/chitietkhachsan?id=@item.Id"><img style="max-height: 201px; object-fit: cover;" src="@Url.Content("~/Images/khachsan/"+item.AnhDaiDien)" alt=""></a>
-                    <div class="listing-avatar">
-                        <a href="#"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
-                        <span class="avatar-tooltip">Được thêm bởi  <strong>Admin</strong></span>
-                    </div>
-                    <div class="sale-window">Sale 20%</div>
-                    <div class="geodir-category-opt">
-                        <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
-                        <div class="rate-class-name">
-                            <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@(getAllDanhGiaByIdKs(item.Id).Count() != null ? getAllDanhGiaByIdKs(item.Id).Count() : 0) Đánh giá </div>
-                            <span>@(getDiemTBAllById(item.Id) != null ? getDiemTBAllById(item.Id) : 5.0)</span>
+    @if(item.IsDelete == false)
+    {
+        <div class="slick-slide-item">
+            <!-- listing-item  -->
+            <div class="listing-item">
+                <article class="geodir-category-listing fl-wrap">
+                    <div class="geodir-category-img">
+                        <a href="/phong/chitietkhachsan?id=@item.Id"><img style="max-height: 201px; object-fit: cover;" src="@Url.Content("~/Images/khachsan/"+item.AnhDaiDien)" alt=""></a>
+                        <div class="listing-avatar">
+                            <a href="#"><img src="../Images/taikhoan/avatar5.png" alt=""></a>
+                            <span class="avatar-tooltip">Được thêm bởi  <strong>Admin</strong></span>
                         </div>
-                    </div>
-                </div>
-                <div class="geodir-category-content fl-wrap title-sin_item">
-                    <div class="geodir-category-content-title fl-wrap">
-                        <div class="geodir-category-content-title-item">
-                            <h3 class="title-sin_map">
-                                <a href="/phong/chitietkhachsan?id=@item.Id">
-                                    @{
-                                        string tenKhachSan = item.TenKhachSan;
-                                        if (tenKhachSan.Length > 30) // Giới hạn 20 ký tự
-                                        {
-                                            tenKhachSan = tenKhachSan.Substring(0, 30) + "..."; // Cắt chuỗi và thêm dấu ba chấm
-                                        }
-                                        @tenKhachSan
-                                    }
-                                </a>
-                            </h3>
-                            <div class="geodir-category-location fl-wrap">
-                                <a href="#" class="map-item"><i class="fas fa-map-marker-alt"></i> 
-                                    @{
-                                        string dia_chi = item.DiaChi;
-                                        int gioiHanKyTu = 30;
-                                        if (dia_chi.Length > gioiHanKyTu)
-                                        {
-                                            dia_chi = dia_chi.Substring(0, gioiHanKyTu) + "...";
-                                        }
-                                        @dia_chi
-                                    }
-                                </a>
+                        <div class="sale-window">Sale 20%</div>
+                        <div class="geodir-category-opt">
+                            <div class="listing-rating card-popup-rainingvis" data-starrating2="@item.SoSao"></div>
+                            <div class="rate-class-name">
+                                <div class="score"><strong> @getDanhGiaBangChu(getDiemTBAllById(item.Id))</strong>@(getAllDanhGiaByIdKs(item.Id).Count() != null ? getAllDanhGiaByIdKs(item.Id).Count() : 0) Đánh giá </div>
+                                <span>@(getDiemTBAllById(item.Id) != null ? getDiemTBAllById(item.Id) : 5.0)</span>
                             </div>
                         </div>
                     </div>
-                    @*<p>
-                        @{
-                            // Giới hạn số ký tự của item.GioiThieu
-                            string gioiThieu = item.GioiThieu;
-                            int gioiHanKyTu = 250; // Số ký tự tối đa mong muốn
-                            if (gioiThieu.Length > gioiHanKyTu)
-                            {
-                                gioiThieu = gioiThieu.Substring(0, gioiHanKyTu) + "...";
-                            }
-                            @gioiThieu
-                        }
-                    </p>*@
-                    <ul class="facilities-list fl-wrap">
-                        @foreach (var tn_ks in getAllTienNghiOfKhachSan(@item.Id).Take(4))
-                        {
-                            <li><i class="@tn_ks.IconTienNghi"></i><span>@tn_ks.TenTienNghi</span></li>
-                        }
-                    </ul>
-                    <div class="geodir-category-footer fl-wrap">
-                        <div class="geodir-opt-link">
-                            <div class="geodir-category-price">1 ĐÊM/ <span>@string.Format("{0:N0} VNĐ", @getGiaTrungBinhKS(item.Id))</span></div>
+                    <div class="geodir-category-content fl-wrap title-sin_item">
+                        <div class="geodir-category-content-title fl-wrap">
+                            <div class="geodir-category-content-title-item">
+                                <h3 class="title-sin_map">
+                                    <a href="/phong/chitietkhachsan?id=@item.Id">
+                                        @{
+                                            string tenKhachSan = item.TenKhachSan;
+                                            if (tenKhachSan.Length > 30) // Giới hạn 20 ký tự
+                                            {
+                                                tenKhachSan = tenKhachSan.Substring(0, 30) + "..."; // Cắt chuỗi và thêm dấu ba chấm
+                                            }
+                                            @tenKhachSan
+                                        }
+                                    </a>
+                                </h3>
+                                <div class="geodir-category-location fl-wrap">
+                                    <a href="#" class="map-item">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        @{
+                                            string dia_chi = item.DiaChi;
+                                            int gioiHanKyTu = 30;
+                                            if (dia_chi.Length > gioiHanKyTu)
+                                            {
+                                                dia_chi = dia_chi.Substring(0, gioiHanKyTu) + "...";
+                                            }
+                                            @dia_chi
+                                        }
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <div class="geodir-opt-list">
-                            @*<a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>*@
-                            <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Lưu</span></a>
-                            @*<a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Tìm chỉ đường</span></a>*@
+                        @*<p>
+                @{
+                // Giới hạn số ký tự của item.GioiThieu
+                string gioiThieu = item.GioiThieu;
+                int gioiHanKyTu = 250; // Số ký tự tối đa mong muốn
+                if (gioiThieu.Length > gioiHanKyTu)
+                {
+                gioiThieu = gioiThieu.Substring(0, gioiHanKyTu) + "...";
+                }
+                @gioiThieu
+                }
+                </p>*@
+                        <ul class="facilities-list fl-wrap">
+                            @foreach (var tn_ks in getAllTienNghiOfKhachSan(@item.Id).Take(4))
+                            {
+                                <li><i class="@tn_ks.IconTienNghi"></i><span>@tn_ks.TenTienNghi</span></li>
+                            }
+                        </ul>
+                        <div class="geodir-category-footer fl-wrap">
+                            <div class="geodir-opt-link">
+                                <div class="geodir-category-price">1 ĐÊM/ <span>@string.Format("{0:N0} VNĐ", @getGiaTrungBinhKS(item.Id))</span></div>
+                            </div>
+                            <div class="geodir-opt-list">
+                                @*<a href="#" class="single-map-item" data-newlatitude="40.90261483" data-newlongitude="-74.15737152"><i class="fal fa-map-marker-alt"></i><span class="geodir-opt-tooltip">On the map</span></a>*@
+                                <a href="#" class="geodir-js-favorite"><i class="fal fa-heart"></i><span class="geodir-opt-tooltip">Lưu</span></a>
+                                @*<a href="#" class="geodir-js-booking"><i class="fal fa-exchange"></i><span class="geodir-opt-tooltip">Tìm chỉ đường</span></a>*@
+                            </div>
                         </div>
                     </div>
-                </div>
-            </article>
+                </article>
+            </div>
+            <!-- listing-item end -->
         </div>
-        <!-- listing-item end -->
-    </div>
+    }
 }

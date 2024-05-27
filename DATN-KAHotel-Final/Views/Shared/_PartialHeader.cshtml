@@ -26,7 +26,7 @@
     <div class="header-inner fl-wrap">
         <div class="container">
             @*<div class="show-search-button"><span>Tìm kiếm</span> <i class="fas fa-search"></i> </div>*@
-            <div class="wishlist-link"><i class="fal fa-heart"></i><span class="wl_counter">3</span></div>
+            @*<div class="wishlist-link"><i class="fal fa-heart"></i><span class="wl_counter">3</span></div>*@
             @if (Context.Session.GetString("login") == "true")
             {
                 <div class="header-user-menu">
@@ -61,20 +61,20 @@
                 <nav>
                     <ul>
                         <li>
-                            <a href="#" class="act-link">Trang chủ <i class="fas fa-caret-down"></i></a>
+                            <a href="#" class="act-link">Trang chủ @*<i class="fas fa-caret-down"></i>*@</a>
                             <!--second level -->
-                            <ul>
+                           @* <ul>
                                 <li><a href="index-2.html">Parallax Image</a></li>
                                 <li><a href="index2.html">Slider</a></li>
                                 <li><a href="index3.html">Video</a></li>
                                 <li><a href="index4.html">Slideshow</a></li>
-                            </ul>
+                            </ul>*@
                             <!--second level end-->
                         </li>
                         <li>
-                            <a href="blog.html">Tin tức</a>
+                            <a href="#">Blog</a>
                         </li>
-                        <li>
+                        @*<li>
                             <a href="#">Thông tin thêm <i class="fas fa-caret-down"></i></a>
                             <!--second level -->
                             <ul>
@@ -90,13 +90,13 @@
                                 <li><a href="coming-soon.html">Đang cập nhật</a></li>
                             </ul>
                             <!--second level end-->
-                        </li>
+                        </li>*@
                     </ul>
                 </nav>
             </div>
             <!-- navigation  end -->
             <!-- wishlist-wrap-->
-            <div class="wishlist-wrap scrollbar-inner novis_wishlist">
+            @*<div class="wishlist-wrap scrollbar-inner novis_wishlist">
                 <div class="box-widget-content">
                     <div class="widget-posts fl-wrap">
                         <ul>
@@ -130,7 +130,7 @@
                         </ul>
                     </div>
                 </div>
-            </div>
+            </div>*@
             <!-- wishlist-wrap end-->
         </div>
     </div>

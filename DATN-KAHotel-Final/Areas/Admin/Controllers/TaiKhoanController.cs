@@ -164,6 +164,7 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
                 user.Anh = filename;
             }
 
+            user.TenDangNhap = tai_khoan;
             user.HoTen = ho_ten;
             user.Email = email;
             user.SoDienThoai = sdt;

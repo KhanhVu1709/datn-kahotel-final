@@ -104,12 +104,12 @@
             <div class="col-md-7 right">
                 <div class="form-group">
                     <p style="color: red;">@TempData["Error"]</p>
-                    <label asp-for="TenDangNhap" class="control-label"></label>
+                    <label asp-for="TenDangNhap" class="control-label">Tên đăng nhập</label>
                     <input asp-for="TenDangNhap" name="TenDangNhap" class="form-control" placeholder="Nhập tên đăng nhập"/>
                 <span asp-validation-for="TenDangNhap" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <label asp-for="MatKhau" class="control-label"></label>
+                    <label asp-for="MatKhau" class="control-label">Mật khẩu</label>
                     @if(Model != null)
                     {
                         <input type="password" asp-for="MatKhau" name="MatKhau" class="form-control" placeholder="Nếu không thay đổi mật khẩu thì không nhập vào ô này"/>
@@ -203,13 +203,13 @@
         var ngaySinh = document.getElementById('NgaySinh').value;
 
         // Kiểm tra mật khẩu có ít nhất 6 ký tự
-        if (matKhau.length < 6) {
-            alert("Mật khẩu phải có ít nhất 6 ký tự");
-            return false; // Ngăn chặn việc gửi form
-        }
+        //if (matKhau.length < 6) {
+        //    alert("Mật khẩu phải có ít nhất 6 ký tự");
+        //    return false; // Ngăn chặn việc gửi form
+        //}
 
         // Kiểm tra xem các trường có được nhập đầy đủ không
-        if (tenDangNhap == "" || matKhau == "" || hoTen == "" || email == "" || soDienThoai == "" || ngaySinh == "") {
+        if (tenDangNhap == "" || hoTen == "" || email == "" || soDienThoai == "" || ngaySinh == "") {
             alert("Vui lòng điền đầy đủ thông tin");
             return false; // Ngăn chặn việc gửi form
         }

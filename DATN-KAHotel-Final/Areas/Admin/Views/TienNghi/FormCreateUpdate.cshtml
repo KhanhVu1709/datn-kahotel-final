@@ -114,29 +114,12 @@
     // Hàm kiểm tra validation của form trước khi gửi
     function validateForm() {
         // Lấy giá trị của các trường trong form
-        var tenDangNhap = document.getElementById('TenDangNhap').value;
-        var matKhau = document.getElementById('MatKhau').value;
-        var hoTen = document.getElementById('HoTen').value;
-        var email = document.getElementById('Email').value;
-        var soDienThoai = document.getElementById('SoDienThoai').value;
-        var ngaySinh = document.getElementById('NgaySinh').value;
-
-        // Kiểm tra mật khẩu có ít nhất 6 ký tự
-        if (matKhau.length < 6) {
-            alert("Mật khẩu phải có ít nhất 6 ký tự");
-            return false; // Ngăn chặn việc gửi form
-        }
+        var TenTienNghi = document.getElementById('TenTienNghi').value;
+        var IconTienNghi = document.getElementById('IconTienNghi').value;
 
         // Kiểm tra xem các trường có được nhập đầy đủ không
-        if (tenDangNhap == "" || matKhau == "" || hoTen == "" || email == "" || soDienThoai == "" || ngaySinh == "") {
+        if (TenTienNghi == "" || IconTienNghi == "" ) {
             alert("Vui lòng điền đầy đủ thông tin");
-            return false; // Ngăn chặn việc gửi form
-        }
-
-        // Kiểm tra định dạng số điện thoại
-        var phonePattern = /^\d{10,11}$/;
-        if (!soDienThoai.match(phonePattern)) {
-            alert("Số điện thoại không hợp lệ");
             return false; // Ngăn chặn việc gửi form
         }
 

@@ -204,7 +204,7 @@
                                             <h3><a href="/phong/timkiemphong?idTinh=@item.Id">@item.TenTinh</a></h3>
                                             <div class="weather-grid" data-grcity="@item.TenTinh"></div>
                                             <div class="clearfix"></div>
-                                            <p>Constant care and attention to the patients makes good record</p>
+                                            <p>@item.GhiChu</p>
                                         </div>
                                     </div>
                                 </div>
@@ -249,7 +249,7 @@
                 </section>
                 <!-- section end -->
                 <!--section -->
-                <section class="parallax-section" data-scrollax-parent="true">
+                @*<section class="parallax-section" data-scrollax-parent="true">
                     <div class="bg" data-bg="../LayoutHotel/images/bg/2.jpg" data-scrollax="properties: { translateY: '100px' }"></div>
                     <div class="overlay op7"></div>
                     <!--container-->
@@ -338,7 +338,7 @@
                             </div>
                         </div>
                     </div>
-                </section>
+                </section>*@
                 <!-- section end -->
             </div>
             <!-- content end-->
@@ -380,31 +380,36 @@
                 var date = $("input[name='main-input-search']").val();
                 var selectCity = $("input[name='main-input-city']").val();
                 var selectedCityId = $("#selectedCityId").val();
-                if (date != "") {
-                    var dateArray = date.split(" - ");
-                    var startDate = dateArray[0];
-                    var endDate = dateArray[1];
-                    // Gửi dữ liệu đến controller
-                    $.ajax({
-                        type: "GET",
-                        url: "/phong/timkiemphong",
-                        data: {
-                            start: startDate,
-                            end: endDate,
-                            city: selectedCityId
-                        },
-                        success: function (response) {
-                            // Xử lý kết quả thành công
-                            window.location.href = "/phong/timkiemphong?IdTinh=" + selectedCityId + "&ngayDen=" + startDate + "&ngayDi=" + endDate;
-                        },
-                        error: function (error) {
-                            console.log("Error:", error);
-                        }
-                    });
+                if(selectedCityId == "") {
+                    alert("Vui lòng chọn địa điểm!");
+                } else {
+                    if (date != "") {
+                        var dateArray = date.split(" - ");
+                        var startDate = dateArray[0];
+                        var endDate = dateArray[1];
+                        // Gửi dữ liệu đến controller
+                        $.ajax({
+                            type: "GET",
+                            url: "/phong/timkiemphong",
+                            data: {
+                                start: startDate,
+                                end: endDate,
+                                city: selectedCityId
+                            },
+                            success: function (response) {
+                                // Xử lý kết quả thành công
+                                window.location.href = "/phong/timkiemphong?IdTinh=" + selectedCityId + "&ngayDen=" + startDate + "&ngayDi=" + endDate;
+                            },
+                            error: function (error) {
+                                console.log("Error:", error);
+                            }
+                        });
+                    }
+                    else {
+                        alert("Vui lòng chọn ngày check-in và check-out");
+                    }
                 }
-                else {
-                    alert("Vui lòng chọn ngày check-in và check-out");
-                }
+                
             });
         });
 

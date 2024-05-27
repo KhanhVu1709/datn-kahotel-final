@@ -20,7 +20,7 @@ namespace DATN_KAHotel_Final.Controllers
             HttpContext.Session.Remove("bat_dau");
             HttpContext.Session.Remove("ket_thuc");
 
-            List<KhachSan> ks_List = db.KhachSans.OrderByDescending(x => x.Id).ToList();
+            List<KhachSan> ks_List = db.KhachSans.Where(x => x.IsDelete == false).OrderByDescending(x => x.Id).ToList();
 
             return View(ks_List);
         }

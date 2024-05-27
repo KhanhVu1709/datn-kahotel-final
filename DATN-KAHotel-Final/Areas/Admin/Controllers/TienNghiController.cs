@@ -67,9 +67,22 @@ namespace DATN_KAHotel_Final.Areas.Admin.Controllers
 
         public IActionResult delete(int idTienNghi)
         {
-            TienNghi tien_nghi = db.TienNghis.FirstOrDefault(k => k.Id == idTienNghi);
-            db.TienNghis.Remove(tien_nghi);
+            //TienNghi tien_nghi = db.TienNghis.FirstOrDefault(k => k.Id == idTienNghi);
+            //db.TienNghis.Remove(tien_nghi);
+            //db.SaveChanges();
+            //return RedirectToAction("danhmuctiennghi", "tiennghi");
+
+            TempData["Message"] = "";
+            PhongTienNghi phongTN = db.PhongTienNghis.FirstOrDefault(k => k.IdTienNghi == idTienNghi);
+            KhachSanTienNghi ksTN = db.KhachSanTienNghis.FirstOrDefault(k => k.IdTienNghi == idTienNghi);
+            if (phongTN != null || ksTN != null)
+            {
+                TempData["Message"] = "Không xoá được tiện nghi này";
+                return RedirectToAction("danhmuctiennghi", "tiennghi");
+            }
+            db.Remove(db.TienNghis.Find(idTienNghi));
             db.SaveChanges();
+            TempData["Message"] = "Tiện nghi đã được xoá";
             return RedirectToAction("danhmuctiennghi", "tiennghi");
         }
     }
